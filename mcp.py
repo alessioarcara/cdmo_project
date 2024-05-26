@@ -22,7 +22,6 @@ def print_usage():
 def solve_with_cp(file_name, solver_name, timeout_seconds):
     from minizinc import Model, Solver, Instance
     m, n, l, s, D = read_instances(file_name)
-    print(f"n={n}")
     model = Model("./Models/cp.mzn")
     solver = Solver.lookup(solver_name)
     instance = Instance(solver, model)
@@ -41,8 +40,22 @@ def solve_with_cp(file_name, solver_name, timeout_seconds):
 
 def solve_with_mip(file_name, solver_name, timeout_seconds):
     from amplpy import AMPL
+    m, n, l, s, D = read_instances(file_name)
     ampl = AMPL()
-    pass
+    ampl.option["solver"] = solver_name
+    ampl.read("./Models/mip.mod")
+
+    ampl.param['m'] = m
+    ampl.param['n'] = n
+    ampl.param['l'] = l
+    ampl.param['s'] = s
+    ampl.param['D'] = D
+
+    ampl.setOption('timelimit', timeout_seconds)
+    ampl.solve()
+
+    print("PLACEHOLDER")
+
 
 
 if __name__ == "__main__":
