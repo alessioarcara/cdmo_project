@@ -23,7 +23,7 @@ def solve_with_cp(file_name, solver_name, timeout_seconds):
     from minizinc import Model, Solver, Instance
     m, n, l, s, D = read_instances(file_name)
     print(f"n={n}")
-    model = Model("./cp/model.mzn")
+    model = Model("./Models/cp.mzn")
     solver = Solver.lookup(solver_name)
     instance = Instance(solver, model)
 
