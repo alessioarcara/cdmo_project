@@ -1,6 +1,6 @@
 import sys
 from datetime import timedelta
-
+from Models.vehicle_routing_sat import vehicle_routing_sat
 
 def read_instances(file_name):
     with open(file_name, 'r') as file:
@@ -38,6 +38,14 @@ def solve_with_cp(file_name, solver_name, timeout_seconds):
     print(result["X"])
     print(result["total_distance"])
 
+def solve_with_sat(file_name, solver_name, timeout_seconds):
+    m, n, l, s, D = read_instances(file_name)
+    routes = vehicle_routing_sat(m, n, s, l, D, timeout=timeout_seconds)
+    if routes:
+        print(f"Solution found with routes: {routes}")
+    else:
+        print("No solution found")
+
 
 def solve_with_mip(file_name, solver_name, timeout_seconds):
     from amplpy import AMPL
@@ -60,6 +68,8 @@ if __name__ == "__main__":
             solve_with_cp(file_name, solver_name, timedelta(seconds=timeout_seconds))
         elif model_type == "mip":
             solve_with_mip(file_name, solver_name, timeout_seconds)
+        elif model_type == "sat":
+            solve_with_sat(file_name, solver_name, timeout_seconds)
         else:
             print(f"Unknown model type: {model_type}")
             print_usage()
