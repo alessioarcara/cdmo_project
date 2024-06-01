@@ -15,6 +15,19 @@ def read_instances(file_name):
         return m, n, l, s, D
 
 
+def expand_matrix(matrix, m):
+    import numpy as np
+    matrix = np.array(matrix)
+    n = matrix.shape[0]
+
+    expanded_matrix = np.zeros((n + m - 1, n + m - 1), dtype=np.int32)
+    expanded_matrix[:n, :n] = matrix
+    expanded_matrix[n:, :n] = matrix[-1, :]
+    expanded_matrix[:n, n:] = matrix[:, -1].reshape(-1, 1)
+    print(expanded_matrix)
+    return expanded_matrix
+
+
 def print_usage():
     print("Usage: python mcp.py <file_name> <model_type> <solver_name> <timeout_seconds>")
 
@@ -22,7 +35,7 @@ def print_usage():
 def solve_with_cp(file_name, solver_name, timeout_seconds):
     from minizinc import Model, Solver, Instance
     m, n, l, s, D = read_instances(file_name)
-    model = Model("./Models/cp.mzn")
+    model = Model("./Models/cp2.mzn")
     solver = Solver.lookup(solver_name)
     instance = Instance(solver, model)
 
@@ -30,32 +43,61 @@ def solve_with_cp(file_name, solver_name, timeout_seconds):
     instance["n"] = n
     instance["l"] = l
     instance["s"] = s
-    instance["D"] = D
+    instance["D"] = expand_matrix(D, m)
+
+    print(f"n={n}, m={m}")
+
 
     result = instance.solve(timeout=timeout_seconds)
 
-    print(result["X"])
-    print(result["total_distance"])
+    print(result)
+    #print(result["total_distance"])
 
 
 def solve_with_mip(file_name, solver_name, timeout_seconds):
-    from amplpy import AMPL
+    import pulp as pl
     m, n, l, s, D = read_instances(file_name)
-    ampl = AMPL()
-    ampl.option["solver"] = solver_name
-    ampl.read("./Models/mip.mod")
 
-    ampl.param['m'] = m
-    ampl.param['n'] = n
-    ampl.param['l'] = l
-    ampl.param['s'] = s
-    ampl.param['D'] = D
+    prob = pl.LpProblem("mcp", pl.LpMinimize)
+    solver = pl.getSolver(solver_name)
 
-    ampl.setOption('timelimit', timeout_seconds)
-    ampl.solve()
+    x = pl.LpVariable.dicts("x", (range(n), range(n)), cat='Binary')
+    u = pl.LpVariable.dicts("u", (range(n)), cat='Integer',
+                            lowBound=0, upBound=n)
 
-    print("PLACEHOLDER")
+    prob += pl.lpSum(D[i][j] * x[i][j] for i in range(n) for j in range(n))
 
+    V = set(range(n))
+    A = set((i, j) for i in V for j in V if i != j)
+
+
+    # 1. Every item is visited once
+    for i in V:
+        prob += (pl.lpSum(x[i][j] for j in V if i != j) >= 1)
+
+    # 2. Flow conservation
+    for i in V:
+        prob += (
+            pl.lpSum(x[i][j] for j in V if i != j) ==
+            pl.lpSum(x[j][i] for j in V if i != j)
+        )
+
+    # 3. Every courier leaves the depot at most once
+    prob += (pl.lpSum(x[0][j] for j in V - {0}) <= 1)
+
+    # 4. Sub tour elimination
+    for k in range(m):
+        for i in V - {n-1}:
+            for j in V - {n-1}:
+                if i != j:
+                    prob += (u[j] - u[i] >= s[j] - l[k] * (1 - x[i][j]))
+
+    prob.solve(solver)
+
+    for i in V:
+        for j in V:
+            if pl.value(x[i][j]) == 1:
+                print(f"x[{i}][{j}] = {pl.value(x[i][j])}")
 
 
 if __name__ == "__main__":
