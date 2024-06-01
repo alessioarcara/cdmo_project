@@ -33,7 +33,7 @@ constraint forall(i in 1..n+m)(
 );
 
 constraint forall(i in 1..m)(dp[n+m+i] == 0);
-constraint forall(i in ITEMS)(
+constraint forall(i in 1..n+m)(
  element(i, dp, D[i, successors[i]])
 );
 
