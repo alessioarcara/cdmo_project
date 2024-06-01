@@ -1,7 +1,6 @@
 include "alldifferent.mzn";
 include "element.mzn";
 include "int_set_channel.mzn";
-include "inverse_set.mzn";
 
 int: m;
 int: n;
@@ -11,7 +10,7 @@ set of int: NODES = 1..(n+2*m);
 
 array[COURIERS] of int: l;  
 array[ITEMS] of int: s;
-array[1..(n+m), 1..(n+m)] of int: D; % n+m?
+array[1..(n+2*m), 1..(n+2*m)] of int: D; % n+m?
 
 array[NODES] of var 0..(n+2*m): successors; % 1
 array[NODES] of var 1..m: assignments; % 3
@@ -33,8 +32,8 @@ constraint forall(i in 1..n+m)(
   element(successors[i], positions, positions[i] + 1)
 );
 
-%constraint forall(i in 1..m)(dp[n+m+i] == 0);
-constraint forall(i in 1..4)(
+constraint forall(i in 1..m)(dp[n+m+i] == 0);
+constraint forall(i in ITEMS)(
  element(i, dp, D[i, successors[i]])
 );
 
