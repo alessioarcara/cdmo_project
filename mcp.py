@@ -46,6 +46,7 @@ def solve_with_cp(file_name, solver_name, timeout_seconds):
     instance["D"] = expand_matrix(D, m)
 
     print(f"n={n}, m={m}")
+    print(f"l={l}")
 
 
     result = instance.solve(timeout=timeout_seconds)
