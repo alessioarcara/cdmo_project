@@ -24,7 +24,7 @@ def expand_matrix(matrix, m):
     expanded_matrix[:n, :n] = matrix
     expanded_matrix[n:, :n] = matrix[-1, :]
     expanded_matrix[:n, n:] = matrix[:, -1].reshape(-1, 1)
-    print(expanded_matrix)
+    # print(expanded_matrix)
     return expanded_matrix
 
 
@@ -51,7 +51,7 @@ def solve_with_cp(file_name, solver_name, timeout_seconds):
     result = instance.solve(timeout=timeout_seconds)
 
     print(result)
-    #print(result["total_distance"])
+    # print(result["total_distance"])
 
 
 def solve_with_mip(file_name, solver_name, timeout_seconds):
