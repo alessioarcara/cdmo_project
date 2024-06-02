@@ -50,6 +50,7 @@ def solve_with_cp(file_name, solver_name, timeout_seconds):
 
     result = instance.solve(timeout=timeout_seconds)
 
+    print(result.statistics)
     print(result)
     #print(result["total_distance"])
 
