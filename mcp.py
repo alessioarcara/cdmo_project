@@ -57,50 +57,36 @@ def solve_with_cp(file_name, solver_name, timeout_seconds):
 
 
 def solve_with_mip(file_name, solver_name, timeout_seconds):
-    import pulp as pl
+    from amplpy import AMPL
     m, n, l, s, D = read_instances(file_name)
+    ampl = AMPL()
+    ampl.read("./Models/mip.mod")
 
-    prob = pl.LpProblem("mcp", pl.LpMinimize)
-    solver = pl.getSolver(solver_name)
+    ampl.param['n'] = n
+    ampl.param['m'] = m
+    ampl.param['d'] = {(i + 1, j + 1): D[i][j] for i in range(n + 1) for j in range(n + 1)}
+    ampl.param['s'] = {i + 1: s[i] for i in range(n)}
+    ampl.param['l'] = {k + 1: l[k] for k in range(m)}
+    
+    ampl.setOption('solver', solver_name)
+    ampl.setOption('solver_options', f'time_limit={timeout_seconds}')
+    ampl.solve()
 
-    x = pl.LpVariable.dicts("x", (range(n), range(n)), cat='Binary')
-    u = pl.LpVariable.dicts("u", (range(n)), cat='Integer',
-                            lowBound=0, upBound=n)
+    x = ampl.getVariable('x').getValues().toPandas()
+    y = ampl.getVariable('y').getValues().toPandas()
+    u = ampl.getVariable('u').getValues().toPandas()
 
-    prob += pl.lpSum(D[i][j] * x[i][j] for i in range(n) for j in range(n))
+    y_df = y.reset_index().pivot(index='index1', columns='index0', values='y.val')
+    y_df.index.name = 'K'
+    y_df.columns.name = 'V'
 
-    V = set(range(n))
-    A = set((i, j) for i in V for j in V if i != j)
-
-
-    # 1. Every item is visited once
-    for i in V:
-        prob += (pl.lpSum(x[i][j] for j in V if i != j) >= 1)
-
-    # 2. Flow conservation
-    for i in V:
-        prob += (
-            pl.lpSum(x[i][j] for j in V if i != j) ==
-            pl.lpSum(x[j][i] for j in V if i != j)
-        )
-
-    # 3. Every courier leaves the depot at most once
-    prob += (pl.lpSum(x[0][j] for j in V - {0}) <= 1)
-
-    # 4. Sub tour elimination
-    for k in range(m):
-        for i in V - {n-1}:
-            for j in V - {n-1}:
-                if i != j:
-                    prob += (u[j] - u[i] >= s[j] - l[k] * (1 - x[i][j]))
-
-    prob.solve(solver)
-
-    for i in V:
-        for j in V:
-            if pl.value(x[i][j]) == 1:
-                print(f"x[{i}][{j}] = {pl.value(x[i][j])}")
-
+    u_df = u.reset_index().pivot(index='index1', columns='index0', values='u.val')
+    u_df.index.name = 'K'
+    u_df.columns.name = 'V'
+    print("\ny:")
+    print(y_df)
+    print("\nu:")
+    print(u_df)
 
 if __name__ == "__main__":
     if len(sys.argv) != 5:

@@ -2,6 +2,7 @@ include "alldifferent.mzn";
 include "element.mzn";
 include "int_set_channel.mzn";
 include "circuit.mzn";
+include "cumulative.mzn";
 
 int: m;
 int: n;
@@ -37,7 +38,16 @@ constraint forall(i in 1..m)(assignments[n+i] == i /\ assignments[n+m+i] == i); 
 constraint forall(i in 1..n+m)(element(successors[i], assignments, assignments[i]) /\ successors[i] != i); % 8 + 9 l'assignment del successore ha lo stesso assignment
   
 constraint int_set_channel([assignments[i] | i in ITEMS], b); % 11.b
-constraint forall(i in COURIERS)(sum([s[j] | j in b[i]]) <= l[i]); % 12
+% constraint forall(i in COURIERS)(sum([s[j] | j in b[i]]) <= l[i]); % 12
+
+constraint forall(i in 1..m)(
+  cumulative(
+    [positions[j] | j in b[i]],
+    [0 | j in b[i]],
+    [s[j] | j in b[i]],
+    l[i],
+  )
+);
 
 
 constraint forall(i in 1..m)(positions[n+i] = 0); % 6;

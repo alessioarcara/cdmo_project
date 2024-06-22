@@ -22,3 +22,4 @@ Group members:
     - https://convegni.unica.it/odysseus2018/files/2018/06/bpc_vr_desaulniers.pdf#page43
     - https://medium.com/@sean-patrick-kelley/how-to-implement-column-generation-for-vehicle-routing-bdb8027c957f
     - https://colab.research.google.com/github/Gurobi/modeling-examples/blob/master/traveling_salesman/tsp.ipynb
+    - https://www.dii.uchile.cl/wp-content/uploads/2015/09/2014-Branch-and-price-and-constraint-programming-for-solving-a-real-life-technician-dispatching-problem.pdf
