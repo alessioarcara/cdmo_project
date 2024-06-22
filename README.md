@@ -11,6 +11,7 @@ Group members:
     - https://hal.science/hal-02181527/file/Verolog_2019_Bourreau.pdf#page43
     - https://www.youtube.com/watch?v=egx9ZiU9v14
     - https://or.stackexchange.com/questions/6765/vrp-through-constraint-programming
+    - http://egon.cheme.cmu.edu/ewo/docs/EWO_seminar_van_Hoeve.pdf
 * SAT 
     - https://arxiv.org/pdf/2206.06618
 * SMT
