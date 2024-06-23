@@ -115,6 +115,7 @@ def main(args):
     print('Errors detected:')
     for e in errors:
       print(f'\t{e}')
+    sys.exit(1)
   else:
     print('No errors detected!')
   
