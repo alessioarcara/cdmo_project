@@ -103,7 +103,7 @@ def main(args):
         if i < 6:
           if result['optimal']:
             if result['obj'] != OPT[i]:
-              errors += [f"{header}: claimed optimal value {result['obj']} inconsistent with actual optimal value {OPTS[i]})"]
+              errors += [f"{header}: claimed optimal value {result['obj']} inconsistent with actual optimal value {OPT[i]})"]
           else:
             warnings += [f"{header}: instance {inst_number} not solved to optimality"]
   print('\nCheck terminated.')

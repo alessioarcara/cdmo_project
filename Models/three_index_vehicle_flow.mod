@@ -2,7 +2,7 @@ param n;
 param m;
 param depot := n+1;
 set V_no_depot := {1..n};                # set of items excluding the depot
-set V := {1..n+1};                       # set of items (including depot)
+set V := {1..depot};                     # set of items (including depot)
 set K := {1..m};                         # set of couriers
 
 param s{V_no_depot};                     # size of each item
@@ -41,4 +41,4 @@ s.t. Capacity_Restriction {k in K}:
     sum {i in V_no_depot} s[i]*y[i,k] <= l[k];
 
 s.t. Subtour_Elimination {i in V_no_depot, j in V_no_depot, k in K: i != j}:
-    u[i, k] - u[j, k] + n * x[i, j, k] <= n - 1;
+    u[i,k] - u[j,k] + n * x[i,j,k] <= n-1;
