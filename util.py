@@ -10,6 +10,7 @@ def read_instances(file_name):
             D.append([int(i) for i in line.strip().split()])
         return m, n, l, s, D
 
+
 def expand_matrix(matrix, m):
     import numpy as np
     matrix = np.array(matrix)
@@ -22,24 +23,29 @@ def expand_matrix(matrix, m):
     print(expanded_matrix)
     return expanded_matrix
 
+
 def measure_solve_time(solve_function):
     import time
     start_time = time.time()
     solve_function()
     end_time = time.time()
-    
+
     solving_time = end_time - start_time
     return solving_time
+
 
 def extract_integer_from_filename(file_name: str):
     import re
     return int(re.findall(r'\d+', file_name)[0])
 
-def write_json_file(key, obj, time, sol, path):
+
+def write_json_file(key, obj, time, optimal, sol, path):
     import os
     import json
-    optimal = time < 300
-    
+
+    if not optimal:
+        time = 300
+
     data = {
         "time": time,
         "optimal": optimal,
