@@ -1,13 +1,66 @@
 {
     "three_index_vehicle_flow_highs": {
-        "time": 0.18590521812438965,
+        "time": 3.641921043395996,
         "optimal": true,
-        "obj": 226,
+        "obj": 322,
         "sol": [
             [
-                3,
-                5,
+                6,
+                1,
+                4
+            ],
+            [
+                3
+            ],
+            [
                 8
+            ],
+            [
+                5
+            ],
+            [
+                2
+            ],
+            [
+                7
+            ]
+        ]
+    },
+    "three_index_vehicle_flow_scip": {
+        "time": 0.9005458354949951,
+        "optimal": true,
+        "obj": 322,
+        "sol": [
+            [
+                5
+            ],
+            [
+                4
+            ],
+            [
+                6
+            ],
+            [
+                7
+            ],
+            [
+                8
+            ],
+            [
+                3,
+                2,
+                1
+            ]
+        ]
+    },
+    "three_index_vehicle_flow_cbc": {
+        "time": 7.932078838348389,
+        "optimal": true,
+        "obj": 322,
+        "sol": [
+            [
+                2,
+                5
             ],
             [
                 7
@@ -16,67 +69,14 @@
                 1
             ],
             [
-                6
-            ],
-            [
-                2
-            ],
-            [
                 4
-            ]
-        ]
-    },
-    "three_index_vehicle_flow_cbc": {
-        "time": 4.538218021392822,
-        "optimal": true,
-        "obj": 322,
-        "sol": [
-            [
-                3
-            ],
-            [
-                2,
-                7
-            ],
-            [
-                1,
-                5
-            ],
-            [
-                4
-            ],
-            [
-                6
-            ],
-            [
-                8
-            ]
-        ]
-    },
-    "three_index_vehicle_flow_scip": {
-        "time": 1.5142619609832764,
-        "optimal": true,
-        "obj": 322,
-        "sol": [
-            [
-                2
             ],
             [
                 8
             ],
             [
+                6,
                 3
-            ],
-            [
-                4,
-                6
-            ],
-            [
-                1,
-                7
-            ],
-            [
-                5
             ]
         ]
     }

@@ -26,9 +26,6 @@ s.t. Visit_Once {i in V_no_depot}:
 s.t. Each_Courier_Leaves_Depot {k in K}:
     y[depot, k] = 1;
 
-#s.t. At_Least_One_Courier_Leaves_Depot:
-#    sum {k in K} y[depot, k] >= 1;
-
 s.t. Avoid_Self_Visit {i in V, k in K}:
     x[i,i,k] = 0;
 
@@ -46,6 +43,3 @@ s.t. Capacity_Restriction{k in K}:
 
 s.t. Subtour_Elimination {i in V_no_depot, j in V_no_depot, k in K: i != j}:
     u[i,k] - u[j,k] + n * x[i,j,k] <= n-1;
-
-subject to Symmetry_Constraint{k1 in K, k2 in K: c[k1] > c[k2]}:
-    load[k1] >= load[k2];

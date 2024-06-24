@@ -23,7 +23,6 @@ def solve_with_cp(file_name, solver_name, timeout_seconds):
     print(f"n={n}, m={m}")
     print(f"l={l}")
 
-
     result = instance.solve(timeout=timeout_seconds)
 
     print(result.statistics)
@@ -35,7 +34,7 @@ def solve_with_mip(file_name, solver, timeout_seconds, model='three_index_vehicl
     from amplpy import AMPL
     m, n, c, s, D = read_instances(file_name)
     ampl = AMPL()
-    ampl.read(f'./Models/{model}.mod')
+    ampl.read(f'./Models/MIP/{model}.mod')
 
     ampl.param['n'] = n
     ampl.param['m'] = m
@@ -54,20 +53,35 @@ def solve_with_mip(file_name, solver, timeout_seconds, model='three_index_vehicl
         ampl.setOption(f'{solver}_options', f'timelimit={timeout_seconds} outlev=1')
 
     solving_time = measure_solve_time(ampl.solve)
-    obj = round(ampl.getObjective('MaxCourDist').value())
     solve_result = ampl.get_value("solve_result")
     if solve_result == "solved":
         optimal = True
     else:
         optimal = False
 
-    y = ampl.getVariable('y').getValues().toPandas()
-    y_df = y.reset_index().pivot(index='index1', columns='index0', values='y.val')
+    obj = round(ampl.getObjective('MaxCourDist').value())
+    x = ampl.getVariable('x').getValues().toDict()
+    sol = []
+    depot = n+1
+    
+    for k in range(1, m + 1):
+        route = []
+        curr_node = depot
 
-    sol = [
-        [idx for idx, val in enumerate(row_data[:-1], start=1) if round(val) == 1]
-        for _, row_data in y_df.iterrows()
-    ]
+        while True:
+            next_node = None
+            for j in range(1, depot):
+                if (curr_node, j, k) in x and x[(curr_node, j, k)] > 0.5:
+                    next_node = j
+                    break
+            
+            if next_node is None or next_node == depot:
+                break
+            
+            route.append(next_node)
+            curr_node = next_node
+        
+        sol.append(route)
 
     instance = extract_integer_from_filename(file_name)
 
