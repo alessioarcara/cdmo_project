@@ -7,11 +7,12 @@ set K := {1..m};                         # set of couriers
 
 param s{V_no_depot};                     # size of each item
 param d{V, V};                           # distance between items
-param l{K};                              # load capacity of each courier
+param c{K};                              # load capacity of each courier
 
 var x{V, V, K} binary;                   # 1 if courier k travels from i to j, 0 otherwise
 var y{V, K} binary;                      # 1 if courier k visits i, 0 otherwise
 var u{V, K} >= 0, <= n-1;                # auxiliary variables for subtour elimination
+var load{K} >= 0;
 var maxCourDist >= 0;                    # maximum distance travelled by any courier
 
 minimize MaxCourDist: maxCourDist;
@@ -37,8 +38,14 @@ s.t. Flow_Conservation_In {i in V, k in K}:
 s.t. Flow_Conservation_Out {i in V, k in K}:
     sum {j in V} x[j,i,k] = y[i,k];
 
-s.t. Capacity_Restriction {k in K}:
-    sum {i in V_no_depot} s[i]*y[i,k] <= l[k];
+s.t. Load_Def{k in K}:
+    load[k] = sum{i in V_no_depot} s[i] * y[i, k];
+
+s.t. Capacity_Restriction{k in K}:
+    load[k] <= c[k];
 
 s.t. Subtour_Elimination {i in V_no_depot, j in V_no_depot, k in K: i != j}:
     u[i,k] - u[j,k] + n * x[i,j,k] <= n-1;
+
+subject to Symmetry_Constraint{k1 in K, k2 in K: c[k1] > c[k2]}:
+    load[k1] >= load[k2];

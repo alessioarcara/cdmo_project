@@ -26,5 +26,19 @@
                 3
             ]
         ]
+    },
+    "three_index_vehicle_flow_scip": {
+        "time": 0.08645296096801758,
+        "optimal": true,
+        "obj": 206,
+        "sol": [
+            [
+                2
+            ],
+            [
+                1,
+                3
+            ]
+        ]
     }
 }

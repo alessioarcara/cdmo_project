@@ -33,7 +33,7 @@ def solve_with_cp(file_name, solver_name, timeout_seconds):
 
 def solve_with_mip(file_name, solver, timeout_seconds, model='three_index_vehicle_flow'):
     from amplpy import AMPL
-    m, n, l, s, D = read_instances(file_name)
+    m, n, c, s, D = read_instances(file_name)
     ampl = AMPL()
     ampl.read(f'./Models/{model}.mod')
 
@@ -41,7 +41,7 @@ def solve_with_mip(file_name, solver, timeout_seconds, model='three_index_vehicl
     ampl.param['m'] = m
     ampl.param['d'] = {(i + 1, j + 1): D[i][j] for i in range(n + 1) for j in range(n + 1)}
     ampl.param['s'] = {i + 1: s[i] for i in range(n)}
-    ampl.param['l'] = {k + 1: l[k] for k in range(m)}
+    ampl.param['c'] = {k + 1: c[k] for k in range(m)}
 
     ampl.setOption('solver', solver)
     if solver_name == 'highs':
@@ -80,6 +80,33 @@ def solve_with_mip(file_name, solver, timeout_seconds, model='three_index_vehicl
     write_json_file(f'{model}_{solver}', obj, solving_time, optimal, sol, f'./res/MIP/{instance}.json')
 
 
+def calculate_route_cost(route, D):
+    cost = 0
+    for i in range(len(route) - 1):
+        cost += D[route[i]][route[i+1]]
+    return cost
+
+
+def solve_with_mip2(file_name):
+    from amplpy import AMPL
+    from itertools import permutations
+    m, n, c, s, D = read_instances(file_name)
+    ampl = AMPL()
+    ampl.read(f'./Models/set_covering.mod')
+
+    ampl.param['n'] = n
+    ampl.param['m'] = m
+
+    depot = n+1
+    feasible_routes = []
+    for perm in permutations(list(range(1, depot))):
+        route = (depot,) + perm + (depot,)
+        route_cost = calculate_route_cost(route, D)
+        route_weight = sum(s[i-1] for i in perm)
+        if route_weight <= max_load:
+            feasible_routes.append((route, route_cost))
+
+
 if __name__ == "__main__":
     if len(sys.argv) != 5:
         print_usage()
@@ -95,6 +122,8 @@ if __name__ == "__main__":
             solve_with_cp(file_name, solver_name, timedelta(seconds=timeout_seconds))
         elif model_type == "mip":
             solve_with_mip(file_name, solver_name, timeout_seconds)
+        elif model_type == "mip2":
+            solve_with_mip2(file_name)
         else:
             print(f"Unknown model type: {model_type}")
             print_usage()
