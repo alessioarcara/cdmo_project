@@ -1,6 +1,6 @@
 {
     "three_index_vehicle_flow_highs": {
-        "time": 0.08136510848999023,
+        "time": 0.10016393661499023,
         "optimal": true,
         "obj": 206,
         "sol": [
