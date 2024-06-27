@@ -94,32 +94,126 @@ def solve_with_mip(file_name, solver, timeout_seconds, model='three_index_vehicl
     write_json_file(f'{model}_{solver}', obj, solving_time, optimal, sol, f'./res/MIP/{instance}.json')
 
 
-def calculate_route_cost(route, D):
+def calculate_route_cost(route, n, D):
     cost = 0
-    for i in range(len(route) - 1):
-        cost += D[route[i]][route[i+1]]
+    depot = n + 1
+    curr_node = depot
+    for next_node in route:
+        cost += D[curr_node - 1][next_node - 1]
+        curr_node = next_node
+    cost += D[curr_node - 1][depot - 1]
     return cost
 
+def make_initial_routes(n, capacities, s, D):
+    routes = {}
+    costs = {}
+    covers = {}
+    depot = n + 1
+    nodes = set(range(1, n + 1))
+    
+    for k, capacity in enumerate(capacities, start=1):
+        route = []
+        curr_node = depot
+        curr_w = 0
 
-def solve_with_mip2(file_name):
+        while nodes:
+            next_node = max((node for node in nodes if curr_w + s[node - 1] <= capacity), key=lambda x: s[x - 1], default=None)
+            if next_node is None:
+                break
+                
+            route.append(next_node)
+            nodes.remove(next_node)
+            curr_w += s[next_node - 1]
+            curr_node = next_node
+        routes[k] = [route]
+        costs[(k, len(routes[k]))] = calculate_route_cost(route, n, D)
+        covers.update({(k, i, 1): 1 if i in route else 0 for i in range(1, n + 1)})
+
+    return routes, costs, covers
+
+def extract_route(x, n):
+    depot = n + 1
+    route = [depot]
+    current = depot
+    while True:
+        next_node = next(j for j in range(1, depot+1) if x[current,j].value() > 0.5)
+        if next_node == depot:
+            break
+        route.append(next_node)
+        current = next_node
+    return route[1:]  # Remove depot from start and end
+
+def solve_with_column_generation(file_name, solver):
     from amplpy import AMPL
-    from itertools import permutations
     m, n, c, s, D = read_instances(file_name)
-    ampl = AMPL()
-    ampl.read(f'./Models/set_covering.mod')
+    ampl_master = AMPL()
+    ampl_master.read('./Models/MIP/set_covering.mod')
+    ampl_master.param['n'] = n
+    ampl_master.param['m'] = m
 
-    ampl.param['n'] = n
-    ampl.param['m'] = m
+    initial_routes, initial_costs, initial_covers = make_initial_routes(n, c, s, D)
+                                                                        
+    route_indices = {}
+    for k, route_list in initial_routes.items():
+        route_indices[k] = list(range(1, len(route_list) + 1))
+        ampl_master.set['R'][k] = route_indices[k]
+        
+    for (k, r), value in initial_costs.items():
+        ampl_master.param['c'][k, r] = value
 
-    depot = n+1
-    feasible_routes = []
-    for perm in permutations(list(range(1, depot))):
-        route = (depot,) + perm + (depot,)
-        route_cost = calculate_route_cost(route, D)
-        route_weight = sum(s[i-1] for i in perm)
-        if route_weight <= max_load:
-            feasible_routes.append((route, route_cost))
+    for (k, i, r), value in initial_covers.items():
+        ampl_master.param['a'][k, i, r] = value
 
+    ampl_master.setOption('solver', solver)
+
+    ampl_pricing = AMPL()
+    ampl_pricing.read('./Models/MIP/pricing_problem.mod')
+    ampl_pricing.param['n'] = n
+    ampl_pricing.param['d'] = {(i + 1, j + 1): D[i][j] for i in range(n + 1) for j in range(n + 1)}
+    ampl_pricing.param['s'] = {i + 1: s[i] for i in range(n)}
+
+    ampl_pricing.setOption('solver', solver)
+
+    finding_better_routes = True
+    while finding_better_routes:
+        ampl_master.solve()
+        dual_values = [ampl_master.getConstraint('Visit_Once').get(i).dual() for i in range(1, n + 1)]
+        dual_values.append(0)
+        print("Dual values:", dual_values)
+
+        ampl_pricing.param['pi'] = {i+1: dual_values[i] for i in range(n + 1)}
+        
+        finding_better_routes = False
+        for k in range(1, m + 1):
+            ampl_pricing.param['C'] = c[k - 1]
+            ampl_pricing.solve()
+
+            reduced_cost = ampl_pricing.obj['MinReducedCost'].value()
+
+            if reduced_cost < 0:
+                finding_better_routes = True
+                x = ampl_pricing.var['x']
+                new_route = extract_route(x, n)
+                initial_routes[k].append(new_route)
+                new_route_index = len(route_indices[k]) + 1
+                route_indices[k].append(new_route_index)
+                new_cost = calculate_route_cost(new_route, n, D)
+                print("New route:", new_route)
+                ampl_master.set['R'][k] = route_indices[k]
+                ampl_master.param['c'][k, new_route_index] = new_cost            
+                for i in range(1, n + 1):
+                    ampl_master.param['a'][k, i, new_route_index] = 1 if i in new_route else 0
+
+    x = ampl_master.var['x']
+    print(x.getValues())
+    for k in range(1, m + 1):
+        print(k)
+        for r in route_indices[k]:
+            if x[k,r].value() > 0.5:
+                print(x[k,r].value())
+                route = initial_routes[k][r -1]
+                print(f"Route {route} is used with cost {ampl_master.param['c'][k,r]}.")
+            
 
 if __name__ == "__main__":
     if len(sys.argv) != 5:
@@ -137,7 +231,7 @@ if __name__ == "__main__":
         elif model_type == "mip":
             solve_with_mip(file_name, solver_name, timeout_seconds)
         elif model_type == "mip2":
-            solve_with_mip2(file_name)
+            solve_with_column_generation(file_name, solver_name)
         else:
             print(f"Unknown model type: {model_type}")
             print_usage()

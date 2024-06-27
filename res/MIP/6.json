@@ -54,7 +54,7 @@
         ]
     },
     "three_index_vehicle_flow_cbc": {
-        "time": 7.932078838348389,
+        "time": 8.125784158706665,
         "optimal": true,
         "obj": 322,
         "sol": [
@@ -77,6 +77,33 @@
             [
                 6,
                 3
+            ]
+        ]
+    },
+    "three_index_vehicle_flow_SB_cbc": {
+        "time": 5.370970964431763,
+        "optimal": true,
+        "obj": 322,
+        "sol": [
+            [
+                2
+            ],
+            [
+                6
+            ],
+            [
+                5,
+                1
+            ],
+            [
+                8
+            ],
+            [
+                4,
+                3
+            ],
+            [
+                7
             ]
         ]
     }

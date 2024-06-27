@@ -43,3 +43,6 @@ s.t. Capacity_Restriction{k in K}:
 
 s.t. Subtour_Elimination {i in V_no_depot, j in V_no_depot, k in K: i != j}:
     u[i,k] - u[j,k] + n * x[i,j,k] <= n-1;
+
+s.t. Symmetry_Breaking {k1 in K, k2 in K: k1 < k2 && c[k1] == c[k2]}:
+    sum{i in V_no_depot} i * y[i,k1] <= sum{i in V_no_depot} i * y[i,k2];
