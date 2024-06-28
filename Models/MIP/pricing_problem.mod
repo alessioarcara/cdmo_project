@@ -6,13 +6,15 @@ set V_no_depot := {1..n};
 param s{V_no_depot};
 param d{V, V};
 param pi{V};
+param sigma;
 param C;
+param max_route_length;  # Current maximum route length
 
 var x{V, V} binary;
 var u{V} >= 0, <= n-1;
 
 minimize MinReducedCost:
-    sum{i in V, j in V} (d[i,j] - pi[i]) * x[i,j];
+    sum{i in V, j in V} (d[i,j] - pi[i]) * x[i,j] - sigma;
 
 s.t. Flow_Conservation {i in V}:
     sum {j in V} x[i,j] - sum {j in V} x[j,i] = 0;
