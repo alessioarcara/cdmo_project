@@ -10,5 +10,3 @@ for i in $(seq -w 1 10); do
     python $SCRIPT $INSTANCE $METHOD $SOLVER 295
 
 done
-
-

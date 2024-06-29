@@ -31,7 +31,9 @@ def solve_with_cp(file_name, solver_name, timeout_seconds):
 
 
 def solve_with_mip(file_name, solver, timeout_seconds, model='three_index_vehicle_flow'):
-    from amplpy import AMPL
+    from amplpy import AMPL, modules
+    import os
+    modules.activate(os.environ["AMPL_LICENSE"])
     m, n, c, s, D = read_instances(file_name)
     ampl = AMPL()
     ampl.read(f'./Models/MIP/{model}.mod')
@@ -63,7 +65,7 @@ def solve_with_mip(file_name, solver, timeout_seconds, model='three_index_vehicl
     x = ampl.getVariable('x').getValues().toDict()
     sol = []
     depot = n+1
-    
+
     for k in range(1, m + 1):
         route = []
         curr_node = depot
@@ -74,13 +76,13 @@ def solve_with_mip(file_name, solver, timeout_seconds, model='three_index_vehicl
                 if (curr_node, j, k) in x and x[(curr_node, j, k)] > 0.5:
                     next_node = j
                     break
-            
+
             if next_node is None or next_node == depot:
                 break
-            
+
             route.append(next_node)
             curr_node = next_node
-        
+
         sol.append(route)
 
     instance = extract_integer_from_filename(file_name)
@@ -110,7 +112,7 @@ def make_initial_routes(n, capacities, s, D):
     covers = {}
     depot = n + 1
     nodes = set(range(1, n + 1))
-    
+
     for k, capacity in enumerate(capacities, start=1):
         route = []
         curr_node = depot
@@ -120,7 +122,7 @@ def make_initial_routes(n, capacities, s, D):
             next_node = max((node for node in nodes if curr_w + s[node - 1] <= capacity), key=lambda x: s[x - 1], default=None)
             if next_node is None:
                 break
-                
+
             route.append(next_node)
             nodes.remove(next_node)
             curr_w += s[next_node - 1]
@@ -135,13 +137,14 @@ def make_initial_routes(n, capacities, s, D):
         for i in range(1, n + 1):
             if [i] not in routes[k]:
                 routes[k].append([i])
-        
-        # Calculate costs and covers for all routes (main and singletons)
+
+        # Calculate costs and covers for all routes (greedy and singletons)
         for idx, r in enumerate(routes[k]):
             costs[(k, idx + 1)] = calculate_route_cost(r, n, D)
             covers.update({(k, i, idx + 1): 1 if i in r else 0 for i in range(1, n + 1)})
 
     return routes, costs, covers
+
 
 def extract_route(x, n):
     depot = n + 1
@@ -154,6 +157,7 @@ def extract_route(x, n):
         route.append(next_node)
         current = next_node
     return route[1:]  # Remove depot from start and end
+
 
 def solve_with_column_generation(file_name, solver):
     from amplpy import AMPL
@@ -168,12 +172,12 @@ def solve_with_column_generation(file_name, solver):
 
     initial_routes, initial_costs, initial_covers = make_initial_routes(n, c, s, D)
     print(initial_routes)
-                                                                        
+
     route_indices = {}
     for k, route_list in initial_routes.items():
         route_indices[k] = list(range(1, len(route_list) + 1))
         ampl_master.set['R'][k] = route_indices[k]
-        
+
     for (k, r), value in initial_costs.items():
         ampl_master.param['c'][k, r] = value
 
@@ -237,7 +241,7 @@ def solve_with_column_generation(file_name, solver):
                 route_indices[k].append(new_route_index)
                 new_cost = calculate_route_cost(new_route, n, D)
                 print(f"Route: {new_route}, Cost: {new_cost}")
-                
+
                 # new_route = []
                 # #x = ampl_pricing.var['x']
                 # #new_route = extract_route(x, n)
@@ -258,12 +262,12 @@ def solve_with_column_generation(file_name, solver):
     for k in range(1, m + 1):
         print(k)
         for r in route_indices[k]:
-            
+
             if x[k,r].value() > 0.5:
                 print(x[k,r].value())
                 route = initial_routes[k][r -1]
                 print(f"Route {route} is used with cost {ampl_master.param['c'][k,r]}.")
-            
+
 
 if __name__ == "__main__":
     if len(sys.argv) != 5:
