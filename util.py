@@ -16,7 +16,7 @@ def expand_matrix(matrix, m):
     matrix = np.array(matrix)
     n = matrix.shape[0]
 
-    expanded_matrix = np.zeros((n + 2* m - 1, n + 2*m - 1), dtype=np.int32)
+    expanded_matrix = np.zeros((n + 2 * m - 1, n + 2 * m - 1), dtype=np.int32)
     expanded_matrix[:n, :n] = matrix
     expanded_matrix[n:, :n] = matrix[-1, :]
     expanded_matrix[:n, n:] = matrix[:, -1].reshape(-1, 1)

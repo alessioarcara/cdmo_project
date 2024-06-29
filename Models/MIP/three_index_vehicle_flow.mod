@@ -15,10 +15,10 @@ var u{V, K} >= 0, <= n-1;                # auxiliary variables for subtour elimi
 var load{K} >= 0;
 var maxCourDist >= 0;                    # maximum distance travelled by any courier
 
-minimize MaxCourDist:  sum {i in V, j in V, k in K} d[i,j] * x[i,j,k];
+minimize MaxCourDist: maxCourDist;
 
-#s.t. MaxCourDist_Def {k in K}:
-#    sum {i in V, j in V} d[i,j] * x[i,j,k] <= maxCourDist;
+s.t. MaxCourDist_Def {k in K}:
+    sum {i in V, j in V} d[i,j] * x[i,j,k] <= maxCourDist;
 
 s.t. Visit_Once {i in V_no_depot}:
     sum {k in K} y[i,k] = 1;
