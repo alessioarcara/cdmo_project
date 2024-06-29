@@ -41,6 +41,25 @@ AMPL_LICENSE="your_license"
 $ run_docker.sh ./Instances/inst01.dat mip highs 60
 ```
 
+## Repository Structure
+
+```
+Repository
+├── Instances/          # Contains problem instances
+├── Models/             # Contains different formulations used
+│   └── CP/
+│   └── MIP/
+│   └── SAT/
+├── Notebooks/          # Jupyter notebooks for plotting results and graphs
+├── res/                # Contains results obtained on different instances and techniques
+│   └── CP/
+│   └── MIP/
+│   └── SAT/
+├── runner.sh           # Bash script to run method and solver on all instances (Python)
+├── run_docker.sh       # Bash script to run method and solver on specific instance (Docker)
+└── [other files]
+```
+
 ## Authors
 
 - Alessio Arcara
