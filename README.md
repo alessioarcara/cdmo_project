@@ -7,6 +7,8 @@ Routing Problem**. The objective is to efficiently plan routes for couriers
 with varying capacities to collect all available items while minimizing the
 maximum distance traveled by any courier.
 
+![Solution for instance 1](example.png)
+
 ## Usage
 
 To reproduce our results, please ensure Docker is installed on your system.
