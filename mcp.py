@@ -1,19 +1,6 @@
 import sys
 from datetime import timedelta
-from Models.vehicle_routing_sat import vehicle_routing_sat
-
-def read_instances(file_name):
-    with open(file_name, 'r') as file:
-        lines = file.readlines()
-        m = int(lines[0].strip())
-        n = int(lines[1].strip())
-        l = [int(i) for i in lines[2].strip().split()]
-        s = [int(i) for i in lines[3].strip().split()]
-        D = []
-        for line in lines[4:]:
-            D.append([int(i) for i in line.strip().split()])
-        return m, n, l, s, D
-
+from util import read_instances, expand_matrix, measure_solve_time, extract_integer_from_filename, write_json_file
 
 def print_usage():
     print("Usage: python mcp.py <file_name> <model_type> <solver_name> <timeout_seconds>")
@@ -22,8 +9,7 @@ def print_usage():
 def solve_with_cp(file_name, solver_name, timeout_seconds):
     from minizinc import Model, Solver, Instance
     m, n, l, s, D = read_instances(file_name)
-    print(f"n={n}")
-    model = Model("./Models/cp.mzn")
+    model = Model("./Models/cp2.mzn")
     solver = Solver.lookup(solver_name)
     instance = Instance(solver, model)
 
@@ -31,26 +17,75 @@ def solve_with_cp(file_name, solver_name, timeout_seconds):
     instance["n"] = n
     instance["l"] = l
     instance["s"] = s
-    instance["D"] = D
+    instance["D"] = expand_matrix(D, m)
+
+    print(f"n={n}, m={m}")
+    print(f"l={l}")
+
 
     result = instance.solve(timeout=timeout_seconds)
 
-    print(result["X"])
-    print(result["total_distance"])
+    print(result.statistics)
+    print(result)
+    #print(result["total_distance"])
 
 def solve_with_sat(file_name, solver_name, timeout_seconds):
+    from Models.SAT.sat_model import sat_model
     m, n, l, s, D = read_instances(file_name)
-    routes = vehicle_routing_sat(m, n, s, l, D, timeout=timeout_seconds)
+    routes = sat_model(m, n, s, l, D, timeout=timeout_seconds)
     if routes:
         print(f"Solution found with routes: {routes}")
     else:
         print("No solution found")
 
 
-def solve_with_mip(file_name, solver_name, timeout_seconds):
+def solve_with_mip(file_name, solver, timeout_seconds, model='three_index_vehicle_flow'):
     from amplpy import AMPL
+    m, n, l, s, D = read_instances(file_name)
     ampl = AMPL()
-    pass
+    ampl.read(f'./Models/{model}.mod')
+
+    ampl.param['n'] = n
+    ampl.param['m'] = m
+    ampl.param['d'] = {(i + 1, j + 1): D[i][j] for i in range(n + 1) for j in range(n + 1)}
+    ampl.param['s'] = {i + 1: s[i] for i in range(n)}
+    ampl.param['l'] = {k + 1: l[k] for k in range(m)}
+
+    ampl.setOption('solver', solver)
+    if solver_name == 'highs':
+        ampl.setOption(f'{solver}_options', f'time_limit={timeout_seconds} outlev=1')
+    elif solver_name == 'cbc':
+        ampl.setOption(f'{solver}_options', f'timelimit={timeout_seconds} logLevel=1')
+    elif solver_name == 'scip':
+        ampl.setOption(f'{solver}_options', f'timelimit={timeout_seconds} outlev=1')
+    elif solver_name == 'gcg':
+        ampl.setOption(f'{solver}_options', f'timelimit={timeout_seconds} outlev=1')
+
+    solving_time = measure_solve_time(ampl.solve)
+    obj = round(ampl.getObjective('MaxCourDist').value())
+    solve_result = ampl.get_value("solve_result")
+    if solve_result == "solved":
+        optimal = True
+    else:
+        optimal = False
+
+    y = ampl.getVariable('y').getValues().toPandas()
+    y_df = y.reset_index().pivot(index='index1', columns='index0', values='y.val')
+
+    sol = [
+        [idx for idx, val in enumerate(row_data[:-1], start=1) if round(val) == 1]
+        for _, row_data in y_df.iterrows()
+    ]
+
+    instance = extract_integer_from_filename(file_name)
+
+    print('='*50)
+    print(f'time: {solving_time:.2f}')
+    print(f'obj: {obj}')
+    print(f'sol: {sol}')
+    print('='*50)
+
+    write_json_file(f'{model}_{solver}', obj, solving_time, optimal, sol, f'./res/MIP/{instance}.json')
 
 
 if __name__ == "__main__":

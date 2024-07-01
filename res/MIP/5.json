@@ -1,0 +1,30 @@
+{
+    "three_index_vehicle_flow_highs": {
+        "time": 0.08136510848999023,
+        "optimal": true,
+        "obj": 206,
+        "sol": [
+            [
+                2
+            ],
+            [
+                1,
+                3
+            ]
+        ]
+    },
+    "three_index_vehicle_flow_cbc": {
+        "time": 0.1168060302734375,
+        "optimal": true,
+        "obj": 206,
+        "sol": [
+            [
+                2
+            ],
+            [
+                1,
+                3
+            ]
+        ]
+    }
+}
