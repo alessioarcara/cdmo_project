@@ -14,6 +14,6 @@ ENV PATH="/src/venv/bin:$PATH"
 
 RUN python3 -m pip install --no-cache-dir -r requirements.txt
 
-RUN python3 -m amplpy.modules install highs --no-cache-dir
+RUN python3 -m amplpy.modules install highs cbc scip gcg --no-cache-dir
 
-CMD python3 ./mcp.py $instance $method $solver $time
+CMD python3 ./mcp.py $instance $method $model $solver $time
