@@ -44,6 +44,6 @@ constraint forall(i in 1..n+m)(
 % symmetry breaking
 constraint forall(i in 1..m-1)(successors[n+i] < successors[n+i+1]);
 
-array[COURIERS] of var int: total_distance = [sum([dp[node] | node in 1..n+m where assignments[node] == c]) | c in COURIERS];
+array[COURIERS] of var int: distances = [sum([dp[node] | node in 1..n+m where assignments[node] == c]) | c in COURIERS];
 
-solve minimize max(total_distance);
+solve minimize max(distances);
