@@ -18,12 +18,12 @@ def print_usage():
     print("  [use_warm_start]: Optional. 'true' to use warm start (only applicable for HiGHS solver in MIP)")
 
 
-def solve_with_cp(file_name, model, solver, timeout_seconds):
-    from minizinc import Model, Solver, Instance
+def solve_with_cp(file_name, model_name, solver_name, timeout_seconds):
+    from minizinc import Model, Solver, Instance, Status
     from datetime import timedelta
     m, n, l, s, D = read_instances(file_name)
-    model = Model(f'./Models/{model}.mzn')
-    solver = Solver.lookup(solver)
+    model = Model(f'./Models/CP/{model_name}.mzn')
+    solver = Solver.lookup(solver_name)
     instance = Instance(solver, model)
 
     instance["m"] = m
@@ -33,12 +33,34 @@ def solve_with_cp(file_name, model, solver, timeout_seconds):
     instance["D"] = expand_matrix(D, m)
 
     print(f"n={n}, m={m}")
-    print(f"l={l}")
 
-    result = instance.solve(timeout=timedelta(seconds=timeout_seconds))
+    def solve():
+        return instance.solve(timeout=timedelta(seconds=timeout_seconds))
+    
+    result, solving_time = measure_solve_time(solve)
 
-    print(result.statistics)
-    print(result)
+    if result.status == Status.SATISFIED or result.status == Status.OPTIMAL_SOLUTION:
+        
+        optimal = result.status == Status.OPTIMAL_SOLUTION
+        obj = result["objective"]
+        sol = [list(route) for route in result["b"]]
+
+        instance = extract_integer_from_filename(file_name)
+
+        print('=' * 50)
+        print(f'solving_time: {solving_time:2f}s')
+        print(f'obj: {obj}')
+        print(f'solve_result: {result}')
+        print('=' * 50)
+
+        print(result.statistics)
+
+        #write_json_file(key,
+        #                obj,
+        #                solving_time,
+        #                optimal,
+        #                sol,
+        #                f'./res/CP/{instance}.json')
 
 
 def solve_with_mip(
@@ -112,7 +134,7 @@ def solve_with_mip(
     elif solver_name == 'gcg':
         ampl.setOption(f'{solver_name}_options', f'timelimit={timeout_seconds} outlev=1')
 
-    solving_time = measure_solve_time(solve)
+    _, solving_time = measure_solve_time(solve)
     solve_result = ampl.get_value("solve_result")
     obj = ampl.getObjective('MaxCourDist').value()
 

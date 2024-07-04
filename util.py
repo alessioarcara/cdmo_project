@@ -29,18 +29,17 @@ def expand_matrix(matrix, m):
     expanded_matrix[:n, :n] = matrix
     expanded_matrix[n:, :n] = matrix[-1, :]
     expanded_matrix[:n, n:] = matrix[:, -1].reshape(-1, 1)
-    print(expanded_matrix)
     return expanded_matrix
 
 
 def measure_solve_time(solve_function):
     import time
     start_time = time.time()
-    solve_function()
+    result = solve_function()
     end_time = time.time()
 
     solving_time = end_time - start_time
-    return solving_time
+    return (result, solving_time)
 
 
 def extract_integer_from_filename(file_name: str):
