@@ -16,17 +16,20 @@ Once Docker is installed, you can solve the different instances by running the
 following bash script in your terminal:
 
 ```{bash}
-$ run_docker.sh <instance_file> <method> <solver> <time>
+$ run_docker.sh <instance_file> <method> <method_name> <solver_name> <time> <use_warm_start>
 ```
 
-Parameters:
+### Parameters
 
 * `<instance_file>`: Path to the instance file.
 * `<method>`: Method to use (`cp`, `sat`, `mip`).
-* `<solver>`: Solver to employ based on the chosen method:
+* `<model_name>`: Formulation to use (depends on the chosen method):
+    - **MIP**: `three_index_vehicle_flow`, `three_index_vehicle_flow_SB`, `three_index_vehicle_flow_SB_IMPLIED`
+* `<solver_name>`: Solver to employ (depends on the chosen method):
     - **CP**: `gecode`, `chuffed`
     - **MIP**: `highs`, `cbc`, `gcg`, `scip`
 * `<time>`: Maximum time in seconds allowed for the solver to run.
+* `[use_warm_start]`: Optional. 'true' to use warm start (only applicable for HiGHS solver in MIP).
 
 > [!IMPORTANT]
 > To use MIP, you need to obtain an AMPL license, which is available for free
@@ -40,7 +43,7 @@ AMPL_LICENSE="your_license"
 ### Example Usage:
 
 ```{bash}
-$ run_docker.sh ./Instances/inst01.dat mip highs 60
+$ run_docker.sh ./Instances/inst01.dat mip three_index_vehicle_flow highs 275
 ```
 
 ## Repository Structure
@@ -51,6 +54,9 @@ Repository
 ├── Models/             # Contains different formulations used
 │   └── CP/
 │   └── MIP/
+│   │   ├── three_index_vehicle_flow
+│   │   ├── three_index_vehicle_flow_SB
+│   │   └── three_index_vehicle_flow_SB_IMPLIED
 │   └── SAT/
 ├── Notebooks/          # Jupyter notebooks for plotting results and graphs
 ├── res/                # Contains results obtained on different instances and techniques
