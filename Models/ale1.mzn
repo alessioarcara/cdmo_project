@@ -16,7 +16,7 @@ array[1..(n+2*m), 1..(n+2*m)] of int: D; % Distance matrix
 array[NODES] of var 0..(n+2*m): successors; % (1)
 array[NODES] of var 1..m: assignments; % (3)
 array[NODES] of var 0..n+1: positions;
-array[COURIERS] of var set of ITEMS: b; % (11.a)
+array[COURIERS] of var set of ITEMS: b; % (11.1)
 array[NODES] of var 0..max(D): dp; % upperbound da definire
 
 % Constraints
@@ -28,18 +28,18 @@ constraint forall(i in 1..m)(assignments[n+i] == i /\ assignments[n+m+i] == i); 
 
 constraint forall(i in 1..n+m)(element(successors[i], assignments, assignments[i]) /\ successors[i] != i); % 8 + 9 l'assignment del successore ha lo stesso assignment
   
-constraint int_set_channel([assignments[i] | i in ITEMS], b); % 11.b
+constraint int_set_channel([assignments[i] | i in ITEMS], b); % 11.2
 constraint forall(i in COURIERS)(sum([s[j] | j in b[i]]) <= l[i]); % 12
 
 constraint forall(i in 1..m)(positions[n+i] = 0); % 6;
 constraint forall(i in 1..n+m)(
-  element(successors[i], positions, positions[i] + 1)
+  element(successors[i], positions, positions[i] + 1) % 10.1 
 );
 
-constraint forall(i in 1..m)(dp[n+m+i] == 0);
+constraint forall(i in 1..m)(dp[n+m+i] == 0); 
 constraint forall(i in 1..n+m)(
  element(i, dp, D[i, successors[i]])
-);
+); % 13.2
 
 % symmetry breaking
 constraint forall(i in 1..m-1)(successors[n+i] < successors[n+i+1]);
@@ -47,12 +47,3 @@ constraint forall(i in 1..m-1)(successors[n+i] < successors[n+i+1]);
 array[COURIERS] of var int: total_distance = [sum([dp[node] | node in 1..n+m where assignments[node] == c]) | c in COURIERS];
 
 solve minimize max(total_distance);
-
-output [
-    "successors = ", show(successors), "\n",
-    "assignments = ", show(assignments), "\n",
-    "positions = ", show(positions), "\n",
-    "b = ", show(b), "\n",
-    "dp = ", show(dp), "\n",
-    "total_distance = ", show(total_distance), "\n",
-];
