@@ -16,7 +16,7 @@ Once Docker is installed, you can solve the different instances by running the
 following bash script in your terminal:
 
 ```{bash}
-$ run_docker.sh <instance_file> <method> <method_name> <solver_name> <time> <use_warm_start>
+$ run_docker.sh <instance_file> <method> <method_name> <solver_name> <time> [use_warm_start]
 ```
 
 ### Parameters
