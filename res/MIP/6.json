@@ -1,68 +1,6 @@
 {
     "three_index_vehicle_flow_highs": {
-        "time": 1.0448365211486816,
-        "optimal": true,
-        "obj": 384,
-        "sol": [
-            [
-                6,
-                3,
-                2,
-                1,
-                5,
-                8,
-                4,
-                7
-            ],
-            [],
-            [],
-            [],
-            [],
-            []
-        ]
-    },
-    "three_index_vehicle_flow_scip": {
-        "time": 0.9005458354949951,
-        "optimal": true,
-        "obj": 322,
-        "sol": [
-            [
-                5
-            ],
-            [
-                4
-            ],
-            [
-                6
-            ],
-            [
-                7
-            ],
-            [
-                8
-            ],
-            [
-                3,
-                2,
-                1
-            ]
-        ]
-    },
-    "three_index_vehicle_flow_cbc": {
-        "time": 300,
-        "optimal": false,
-        "obj": 0,
-        "sol": [
-            [],
-            [],
-            [],
-            [],
-            [],
-            []
-        ]
-    },
-    "three_index_vehicle_flow_SB_cbc": {
-        "time": 5.370970964431763,
+        "time": 2,
         "optimal": true,
         "obj": 322,
         "sol": [
@@ -70,21 +8,21 @@
                 2
             ],
             [
-                6
-            ],
-            [
-                5,
-                1
-            ],
-            [
-                8
-            ],
-            [
-                4,
                 3
             ],
             [
+                5,
+                4
+            ],
+            [
                 7
+            ],
+            [
+                6
+            ],
+            [
+                1,
+                8
             ]
         ]
     }
