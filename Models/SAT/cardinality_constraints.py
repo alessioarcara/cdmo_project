@@ -66,35 +66,7 @@ def at_most_k_seq(bool_vars, k, name):
     return And(constraints)
 
 def exactly_k_seq(bool_vars, k, name):
-    return And(at_most_k_seq(bool_vars, k, name), at_least_k_seq(bool_vars, k, name))
-
-def Pb_seq_counter(bool_vars, coeffs, k, name):
-    constraints = []
-    n = len(bool_vars)
-    seq_auxiliary = [[Bool(f"s_{name}_{i}_{j}") for j in range(k + 1)] for i in range(n + 1)]
-    for i in range(1, n + 1):
-        wi = coeffs[i - 1]
-        for j in range(1, k + 1):
-            if i >= 2 and i <= n and j <= k:
-                constraints.append(Or(Not(seq_auxiliary[i - 1][j]), seq_auxiliary[i][j]))
-            if i <= n and j <= wi:
-                constraints.append(Or(Not(bool_vars[i - 1]), seq_auxiliary[i][j]))
-            if i >= 2 and i <= n and j <= k - wi:
-                constraints.append(Or(Not(seq_auxiliary[i - 1][j]), Not(bool_vars[i - 1]), seq_auxiliary[i][j + wi]))
-        if i >= 2:
-            constraints.append(Or(Not(seq_auxiliary[i - 1][k + 1 - wi]), Not(bool_vars[i - 1])))
-
-    return constraints
-
-def successive(v, u):
-    n = len(v)
-    clauses = []
-
-    clauses.append(Not(u[0]))
-    for i in range(n-1):
-        clauses.append(v[i] == u[i+1])
-    clauses.append(Not(v[n-1]))
-
-    return And(clauses)
+    return And(at_most_k_seq(bool_vars, k, name), at_least_k_seq(bool_vars, k, name))    
 
 exactly_one = exactly_one_seq
+at_least_one = at_least_one_seq

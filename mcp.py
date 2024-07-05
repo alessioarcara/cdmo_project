@@ -29,14 +29,16 @@ def solve_with_cp(file_name, solver_name, timeout_seconds):
     print(result)
     #print(result["total_distance"])
 
-def solve_with_sat(file_name, solver_name, timeout_seconds):
+def solve_with_sat(file_name, solver, timeout_seconds, model='swc'):
     from Models.SAT.sat_model import sat_model
     m, n, l, s, D = read_instances(file_name)
-    routes = sat_model(m, n, s, l, D, timeout=timeout_seconds)
-    if routes:
-        print(f"Solution found with routes: {routes}")
-    else:
-        print("No solution found")
+    obj, time, sol = sat_model(m, n, s, l, D, symmetry_breaking = False, implied_constraint = True, timeout_duration=timeout_seconds)
+
+    optimal = True if time < timeout_seconds else False
+
+    instance = extract_integer_from_filename(file_name)
+
+    write_json_file(f'{model}_{solver}', obj, time, optimal, sol, f'./res/SAT/{instance}.json')
 
 
 def solve_with_mip(file_name, solver, timeout_seconds, model='three_index_vehicle_flow'):
