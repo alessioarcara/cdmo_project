@@ -1,50 +1,77 @@
-# Combinatorial Decision Making and Optimization 2023/2024 Group Project
+# Heterogeneous Min-Max Vehicle Routing Problem
 
-Group members:
+This repository represents the group project for Combinatorial Decision Making
+and Optimization 2024/2024, focusing on implementing and evaluating diverse
+solving techniques (*CP*, *SAT*, *MIP*) for the **Heterogeneous Min-Max Vehicle
+Routing Problem**. The objective is to efficiently plan routes for couriers
+with varying capacities to collect all available items while minimizing the
+maximum distance traveled by any courier.
+
+![Solution for instance 1](example.png)
+
+## Usage
+
+To reproduce our results, please ensure Docker is installed on your system.
+Once Docker is installed, you can solve the different instances by running the
+following bash script in your terminal:
+
+```{bash}
+$ run_docker.sh <instance_file> <method> <method_name> <solver_name> <time> [use_warm_start]
+```
+
+### Parameters
+
+* `<instance_file>`: Path to the instance file.
+* `<method>`: Method to use (`cp`, `sat`, `mip`).
+* `<model_name>`: Formulation to use (depends on the chosen method):
+    - **MIP**: `three_index_vehicle_flow`, `three_index_vehicle_flow_SB`, `three_index_vehicle_flow_SB_IMPLIED`
+* `<solver_name>`: Solver to employ (depends on the chosen method):
+    - **CP**: `gecode`, `chuffed`
+    - **MIP**: `highs`, `cbc`, `gcg`, `scip`
+* `<time>`: Maximum time in seconds allowed for the solver to run.
+* `[use_warm_start]`: Optional. 'true' to use warm start (only applicable for HiGHS solver in MIP).
+
+> [!IMPORTANT]
+> To use MIP, you need to obtain an AMPL license, which is available for free
+> through the community edition. After acquiring your license, modify the
+> corresponding line in the Dockerfile accordingly.
+
+```{dockerfile}
+AMPL_LICENSE="your_license"
+```
+
+### Example Usage:
+
+```{bash}
+$ run_docker.sh ./Instances/inst01.dat mip three_index_vehicle_flow highs 275
+```
+
+## Repository Structure
+
+```
+Repository
+├── Instances/          # Contains problem instances
+├── Models/             # Contains different formulations used
+│   └── CP/
+│   └── MIP/
+│   │   ├── three_index_vehicle_flow
+│   │   ├── three_index_vehicle_flow_SB
+│   │   └── three_index_vehicle_flow_SB_IMPLIED
+│   └── SAT/
+├── Notebooks/          # Jupyter notebooks for plotting results and graphs
+├── res/                # Contains results obtained on different instances and techniques
+│   └── CP/
+│   └── MIP/
+│   └── SAT/
+├── runner.sh           # Bash script to run method and solver on all instances (Python)
+├── run_docker.sh       # Bash script to run method and solver on specific instance (Docker)
+└── [other files]
+```
+
+## Authors
+
 - Alessio Arcara
 - Alessia Crimaldi
 - Alessio Pittiglio
 
-## Resources
 
-1. **Pseudo-Boolean Constraints (PBAdder)**:
-    - **Source**: 
-        - [LogicNG PBAdderNetworks.java](https://github.com/logic-ng/LogicNG/blob/master/src/main/java/org/logicng/pseudobooleans/PBAdderNetworks.java)
-        - [pblib/adderencoding.cpp](https://github.com/master-keying/pblib/blob/master/pblib/encoder/adderencoding.cpp)
-    - **Description**: These resources provide implementations for adding pseudo-Boolean constraints using adders.
-
-2. **DIMACS Format**:
-    - **Source**: [Converting CNF to DIMACS format - Stack Overflow](https://stackoverflow.com/questions/71416259/converting-cnf-format-to-dimacs-format)
-    - **Description**: This site explains how to convert CNF format to DIMACS format, which is a standard format for input to SAT solvers.
-
-3. **Pseudo-Boolean Constraints in SAT**:
-    - **Source**: 
-        - [PBLib – A C++ Toolkit for Encoding Pseudo-Boolean Constraints into CNF](https://arxiv.org/pdf/2110.08068)
-        - [Objective functions in SAT solvers - Stack Overflow](https://stackoverflow.com/questions/62867403/how-are-objective-functions-represented-in-sat-solvers)
-    - **Description**: These resources provide insights into encoding pseudo-Boolean constraints into CNF and representing objective functions in SAT solvers.
-
-4. **Vehicle Routing Problem**:
-    - **Source**: [The Vehicle Routing Problem (Book)](https://industri.fatek.unpatti.ac.id/wp-content/uploads/2019/03/002-The-Vehicle-Routing-Problem-Monograf-on-discrete-mathematics-and-applications-Paolo-Toth-Daniele-Vigo-Edisi-1-2002.pdf)
-    - **Description**: This book provides comprehensive coverage of the vehicle routing problem, including mathematical formulations, algorithms, and practical applications.
-
-5. **Encoding SWC (Sequential Weight Counter)**:
-    - **Source**: [Encoding SWC Paper](https://iccl.inf.tu-dresden.de/w/images/c/c3/Steinke:11:KI.pdf)
-    - **Description**: This paper discusses the encoding of sequential weight counter in SAT, comparing different encoding methods and their efficiencies.
-
-6. **Cardinality Constraints**:
-    - **Source**: [Cardinality Constraints Documentation](https://logicng.org/documentation/formulas/cardinality-constraints/)
-    - **Description**: This documentation provides information on cardinality constraints and their implementations in LogicNG.
-
-## Encodings and Their Differences
-
-### Pseudo-Boolean (PB) Encoding
-
-PB encoding involves expressing constraints as linear inequalities over Boolean variables. These constraints are then converted into CNF (Conjunctive Normal Form) using various encoding techniques. The complexity of PB encoding depends on the method used. For instance, PBAdder networks require multiple auxiliary variables and clauses, leading to increased computational overhead.
-
-### DIMACS Format
-
-- **Description**: DIMACS format is a standard text format for specifying SAT problems. It uses a specific syntax to define variables and clauses in CNF. Commonly used for input to SAT solvers, enabling the representation of large and complex SAT instances.
-
-### SWC (Sequential Weight Counter) Encoding
-
-- **Description**: SWC encoding preserves general arc consistency and is efficient in terms of the number of clauses and variables required. It uses O(nk) clauses and auxiliary variables. Compared to other encodings like BDD (Binary Decision Diagrams) or sorting networks, SWC is simpler and maintains consistency better, making it suitable for specific types of SAT problems.
