@@ -38,4 +38,10 @@ s.t. Capacity_Restriction{k in K}:
     sum{i in V_no_depot} s[i] * y[i, k] <= c[k];
 
 s.t. Subtour_Elimination {i in V_no_depot, j in V_no_depot, k in K: i != j}:
-   u[i,k] - u[j,k] + 1  <= n * (1 - x[i,j,k]);
+    u[i,k] - u[j,k] + 1  <= n * (1 - x[i,j,k]);
+
+s.t. Symmetry_Breaking {k1 in K, k2 in K: k1 < k2 && c[k1] == c[k2]}:
+    sum{i in V_no_depot} i * y[i,k1] <= sum{i in V_no_depot} i * y[i,k2];
+
+s.t. Higher_Load_For_Higher_Capacity {k1 in K, k2 in K: k1 != k2 && c[k1] > c[k2]}:
+    sum{i in V_no_depot} s[i] * y[i,k1] >= sum{i in V_no_depot} s[i] * y[i,k2];

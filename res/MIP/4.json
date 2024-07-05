@@ -1,12 +1,12 @@
 {
     "three_index_vehicle_flow_highs": {
-        "time": 2.8777120113372803,
+        "time": 2,
         "optimal": true,
         "obj": 220,
         "sol": [
             [
-                2,
-                4
+                4,
+                2
             ],
             [
                 1
@@ -24,22 +24,88 @@
                 6
             ],
             [
-                7,
-                9
+                9,
+                7
             ],
             [
                 3
             ]
         ]
     },
-    "three_index_vehicle_flow_cbc": {
-        "time": 3.8745510578155518,
+    "three_index_vehicle_flow_SB_highs": {
+        "time": 5,
         "optimal": true,
         "obj": 220,
         "sol": [
             [
-                2,
+                4
+            ],
+            [
+                2
+            ],
+            [
+                1
+            ],
+            [
+                10,
+                6,
+                3
+            ],
+            [
+                7
+            ],
+            [
+                8
+            ],
+            [
+                5
+            ],
+            [
                 9
+            ]
+        ]
+    },
+    "three_index_vehicle_flow_SB_IMPLIED_highs": {
+        "time": 4,
+        "optimal": true,
+        "obj": 220,
+        "sol": [
+            [
+                9
+            ],
+            [
+                4
+            ],
+            [
+                1
+            ],
+            [
+                8
+            ],
+            [
+                10
+            ],
+            [
+                6,
+                3
+            ],
+            [
+                5
+            ],
+            [
+                2,
+                7
+            ]
+        ]
+    },
+    "three_index_vehicle_flow_cbc": {
+        "time": 3,
+        "optimal": true,
+        "obj": 220,
+        "sol": [
+            [
+                9,
+                2
             ],
             [
                 1
@@ -62,6 +128,72 @@
             ],
             [
                 6
+            ]
+        ]
+    },
+    "three_index_vehicle_flow_scip": {
+        "time": 3,
+        "optimal": true,
+        "obj": 220,
+        "sol": [
+            [
+                2,
+                6
+            ],
+            [
+                3
+            ],
+            [
+                1
+            ],
+            [
+                7,
+                4
+            ],
+            [
+                8
+            ],
+            [
+                9
+            ],
+            [
+                5
+            ],
+            [
+                10
+            ]
+        ]
+    },
+    "three_index_vehicle_flow_SB_highs_WM": {
+        "time": 5,
+        "optimal": true,
+        "obj": 220,
+        "sol": [
+            [
+                4
+            ],
+            [
+                2
+            ],
+            [
+                1
+            ],
+            [
+                10,
+                6,
+                3
+            ],
+            [
+                7
+            ],
+            [
+                8
+            ],
+            [
+                5
+            ],
+            [
+                9
             ]
         ]
     }
