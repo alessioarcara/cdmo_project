@@ -7,7 +7,6 @@ from util import (MethodType,
                   write_json_file,
                   make_initial_routes)
 
-
 def print_usage():
     print("Usage: python mcp.py <file_name> <model_type> <model_name> <solver_name> <timeout_seconds> [use_warm_start]")
     print("  <file_name>: Path to the instance file")
@@ -39,6 +38,17 @@ def solve_with_cp(file_name, model, solver, timeout_seconds):
 
     print(result.statistics)
     print(result)
+
+def solve_with_sat(file_name, solver, timeout_seconds, model='swc'):
+    from Models.SAT.sat_model import sat_model
+    m, n, l, s, D = read_instances(file_name)
+    obj, time, sol = sat_model(m, n, s, l, D, symmetry_breaking = False, implied_constraint = True, timeout_duration=timeout_seconds)
+
+    optimal = True if time < timeout_seconds else False
+
+    instance = extract_integer_from_filename(file_name)
+
+    write_json_file(f'{model}_{solver}', obj, time, optimal, sol, f'./res/SAT/{instance}.json')
 
 
 def solve_with_mip(
@@ -179,6 +189,8 @@ if __name__ == "__main__":
 
         if model_type == MethodType.CP:
             solve_with_cp(file_name, model_name, solver_name, timeout_seconds)
+        elif model_type = MethodType.SAT:
+            solve_with_sat(file_name, solver_name, timeout_seconds)
         elif model_type == MethodType.MIP:
             solve_with_mip(file_name, model_name, solver_name, timeout_seconds,
                            use_warm_start=use_warm_start)
