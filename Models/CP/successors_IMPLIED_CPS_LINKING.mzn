@@ -15,15 +15,15 @@ array[1..(n+2*m), 1..(n+2*m)] of int: D;       % distance matrix
 % Decision variables
 array[V] of var 0..(n+2*m): successors;
 array[V] of var 1..m: assignments;
-array[V] of var 0..n+1: positions;
+array[V] of var 0..n: positions;
 
 % Auxiliary variables
-array[V] of var 0..(n+2*m): predecessors;
 array[K] of var set of N: b;                   % array of assigned items to courier
-array[1..(n+m)] of var 0..max(D): dp;          % array of arc travelled distance
-array[V] of var 0..max(l): cps;                % array of added capacities
+array[1..n+m] of var 0..max(D): dp;            % array of arc travelled distance
 array[K] of var 1..sum(D): distances;          % array of total distance
-%
+% Improvements
+array[V] of var 0..(n+2*m): predecessors;
+array[V] of var 0..max(l): cps;                % array of added capacities
 array[1..(n+m)] of var 1..(100*m+(2*m+n)): y;  % link variable
 
 % Constraints
@@ -51,18 +51,31 @@ constraint forall(i in 1..n+m)(
 );
 % Objective variable
 constraint forall(i in K) (
- distances[i] = sum([dp[j] | j in b[i]]) + dp[n+i]
+  distances[i] = sum([dp[j] | j in b[i]]) + dp[n+i]
+);
+
+
+%%%%%% PREDECESSORS (IMPLIED) %%%%%%
+% redundant constraint but better propagation
+
+constraint forall(i, k in 1..n+m)(
+  predecessors[k] = i <-> successors[i] = k
+);
+
+constraint forall(i in 1..m)(
+  predecessors[n+m+i] = n+i
 );
 
 %%%%%% CAPACITY SUM %%%%%%
-% (21)
+
 constraint forall(i in V)(
   cps[i] <= l[assignments[i]]
 );
+
 constraint forall(i in 1..m)(
   cps[n+i] == 0
 );
-% (20)
+
 constraint forall(i in 1..n)(
   element(successors[i], cps, cps[i] + s[i])
 );
@@ -74,30 +87,4 @@ constraint forall(i in 1..m)(
 );
 
 
-
-
-
-%%%%%% PREDECESSORS (IMPLIED) %%%%%%
-
-constraint forall(i, k in 1..n+m)(
-  predecessors[k] = i <-> successors[i] = k
-); % redundant constraint but better propagation
-
-constraint forall(i in 1..m)(
-  predecessors[n+m+i] = n+i
-);
-
-%%%%%% SYMMETRY BREAKING %%%%%%
-
-%constraint forall(i in 1..m-1)(successors[n+i] < successors[n+i+1]);
-%Symmetry breaking for vehicles with equal capacities
-constraint forall(i in 1..m-1, j in i+1..m where l[i] == l[j]) (successors[n+i] < successors[n+j]);
-%Symmetry breaking for vehicles with different capacities
-constraint forall(i in 1..m-1, j in i+1..m where l[i] > l[j]) (successors[n+i] < successors[n+j]);
-
-%%%%%% SEARCH %%%%%%
-
-solve
-%:: int_search(successors, dom_w_deg, indomain_min)
-%:: restart_luby(100)
-%:: int_search(dp, max_regret, indomain_min)
+solve minimize max(distances);

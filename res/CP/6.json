@@ -1,0 +1,137 @@
+{
+    "successors_gecode": {
+        "time": 16,
+        "optimal": true,
+        "obj": 322,
+        "sol": [
+            [
+                8,
+                4,
+                7
+            ],
+            [
+                6
+            ],
+            [
+                5
+            ],
+            [
+                3
+            ],
+            [
+                2
+            ],
+            [
+                1
+            ]
+        ]
+    },
+    "successors_IMPLIED_gecode": {
+        "time": 300,
+        "optimal": false,
+        "obj": 322,
+        "sol": [
+            [
+                8,
+                4,
+                7
+            ],
+            [
+                6
+            ],
+            [
+                5
+            ],
+            [
+                3
+            ],
+            [
+                2
+            ],
+            [
+                1
+            ]
+        ]
+    },
+    "successors_IMPLIED_CPS_gecode": {
+        "time": 300,
+        "optimal": false,
+        "obj": 322,
+        "sol": [
+            [
+                8,
+                4,
+                7
+            ],
+            [
+                6
+            ],
+            [
+                5
+            ],
+            [
+                3
+            ],
+            [
+                2
+            ],
+            [
+                1
+            ]
+        ]
+    },
+    "successors_IMPLIED_CPS_SB_gecode": {
+        "time": 300,
+        "optimal": false,
+        "obj": 322,
+        "sol": [
+            [
+                8,
+                1,
+                7
+            ],
+            [
+                2
+            ],
+            [
+                3
+            ],
+            [
+                4
+            ],
+            [
+                6
+            ],
+            [
+                5
+            ]
+        ]
+    },
+    "successors_SEARCH_gecode": {
+        "time": 262,
+        "optimal": true,
+        "obj": 322,
+        "sol": [
+            [
+                1,
+                2,
+                7
+            ],
+            [
+                5
+            ],
+            [
+                3
+            ],
+            [
+                8
+            ],
+            [
+                4
+            ],
+            [
+                6
+            ]
+        ]
+    }
+}

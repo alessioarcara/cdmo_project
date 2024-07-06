@@ -16,8 +16,10 @@ array[1..(n+2*m), 1..(n+2*m)] of int: D;   % distance matrix
 array[V] of var 0..(n+2*m): successors;
 array[V] of var 1..m: assignments;
 array[V] of var 0..n: positions;
+
+% Auxiliary variables
 array[K] of var set of N: b;               % array of assigned items to courier
-array[V] of var 0..max(D): dp;             % array of arc travelled distance
+array[1..n+m] of var 0..max(D): dp;        % array of arc travelled distance
 array[K] of var 1..sum(D): distances;      % array of total distance
 
 % Constraints
@@ -43,10 +45,10 @@ constraint forall(i in K)(sum([s[j] | j in b[i]]) <= l[i]);
 constraint forall(i in 1..n+m)(
  element(i, dp, D[i, successors[i]])
 );
-constraint forall(i in 1..m)(dp[n+m+i] == 0);
-
 % Objective variable
-constraint distances = [sum([dp[node] | node in 1..n+m where assignments[node] == c]) | c in K];
+constraint forall(i in K) (
+  distances[i] = sum([dp[j] | j in b[i]]) + dp[n+i]
+);
 
-% Objective function
+
 solve minimize max(distances);
