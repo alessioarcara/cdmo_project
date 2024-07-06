@@ -45,22 +45,19 @@ def solve_with_cp(file_name, model_name, solver_name, timeout_seconds):
         obj = result["objective"]
         sol = [list(route) for route in result["b"]]
 
-        instance = extract_integer_from_filename(file_name)
-
-        print('=' * 50)
-        print(f'solving_time: {solving_time:2f}s')
-        print(f'obj: {obj}')
-        print(f'solve_result: {result}')
-        print('=' * 50)
-
+        print_result(solving_time, optimal, obj, sol, True)
         print(result.statistics)
 
-        #write_json_file(key,
-        #                obj,
-        #                solving_time,
-        #                optimal,
-        #                sol,
-        #                f'./res/CP/{instance}.json')
+        instance = extract_integer_from_filename(file_name)
+        key = f'{model_name}_{solver_name}'
+        write_json_file(key,
+                        obj,
+                        solving_time,
+                        optimal,
+                        sol,
+                        f'./res/CP/{instance}.json')
+    else: 
+        print_result(solving_time, result.status, None, None, False)
 
 def solve_with_sat(file_name, solver, timeout_seconds, model='swc'):
     from Models.SAT.sat_model import sat_model
@@ -203,7 +200,7 @@ if __name__ == "__main__":
 
         if model_type == MethodType.CP:
             solve_with_cp(file_name, model_name, solver_name, timeout_seconds)
-        elif model_type = MethodType.SAT:
+        elif model_type == MethodType.SAT:
             solve_with_sat(file_name, solver_name, timeout_seconds)
         elif model_type == MethodType.MIP:
             solve_with_mip(file_name, model_name, solver_name, timeout_seconds,
