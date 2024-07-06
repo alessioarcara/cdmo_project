@@ -1,80 +1,83 @@
 include "alldifferent.mzn";
 include "element.mzn";
 include "int_set_channel.mzn";
-include "circuit.mzn";
-include "cumulative.mzn";
 
-int: m;
-int: n;
-set of int: COURIERS = 1..m;
-set of int: ITEMS = 1..n;
-set of int: NODES = 1..(n+2*m);
+% Input parameters
+int: m;                                        % number of couriers
+int: n;                                        % number of items
+set of int: K = 1..m;                          % set of couriers
+set of int: N = 1..n;                          % set of items
+set of int: V = 1..(n+2*m);                    % set of vertices
+array[K] of int: l;                            % load capacities of couriers
+array[N] of int: s;                            % sizes of items
+array[1..(n+2*m), 1..(n+2*m)] of int: D;       % distance matrix
 
-array[COURIERS] of int: l;  
-array[ITEMS] of int: s;
-array[1..(n+2*m), 1..(n+2*m)] of int: D; % n+m?
+% Decision variables
+array[V] of var 0..(n+2*m): successors;
+array[V] of var 1..m: assignments;
+array[V] of var 0..n+1: positions;
 
-array[NODES] of var 0..(n+2*m): successors; % 1
-array[NODES] of var 0..(n+2*m): predecessors; % sicuro?
-array[NODES] of var 1..m: assignments; % 3
-array[NODES] of var 0..n+1: positions;
-array[COURIERS] of var set of ITEMS: b; % 11.a
-array[1..(n+m)] of var 0..max(D): dp; % upperbound da definire
-array[COURIERS] of var 1..sum(D): dists; % upperbound giusto?
-array[1..(n+m)] of var 1..(100*m+(2*m+n)): y;
-array[NODES] of var 0..max(l): cps;
-%array[NODES] of var 1..(2*m+n): dps;
+% Auxiliary variables
+array[V] of var 0..(n+2*m): predecessors;
+array[K] of var set of N: b;                   % array of assigned items to courier
+array[1..(n+m)] of var 0..max(D): dp;          % array of arc travelled distance
+array[V] of var 0..max(l): cps;                % array of added capacities
+array[K] of var 1..sum(D): distances;          % array of total distance
+%
+array[1..(n+m)] of var 1..(100*m+(2*m+n)): y;  % link variable
 
-% si potrebbe provare a linkare invece che settarli a zero
-% 
-
-
-
-
-constraint forall(i in 1..m)(successors[n+m+i] == 0); % 2
-
-constraint all_different_except_0(successors); % 7
-constraint forall(i in 1..m)(assignments[n+i] == i /\ assignments[n+m+i] == i); % 4
-constraint forall(i in 1..n+m)(element(successors[i], assignments, assignments[i]) /\ successors[i] != i); % 8 + 9 l'assignment del successore ha lo stesso assignment
-  
-constraint int_set_channel([assignments[i] | i in ITEMS], b); % 11.b
-% constraint forall(i in COURIERS)(sum([s[j] | j in b[i]]) <= l[i]); % 12
-
-constraint forall(i in 1..m)(
-  cumulative(
-    [positions[j] | j in b[i]],
-    [0 | j in b[i]],
-    [s[j] | j in b[i]],
-    l[i],
-  )
-);
-
-
-constraint forall(i in 1..m)(positions[n+i] = 0); % 6;
+% Constraints
+% (2)
+constraint forall(i in 1..m)(successors[n+m+i] == 0);
+% (4)
+constraint forall(i in 1..m)(assignments[n+i] == i /\ assignments[n+m+i] == i);
+% (6)
+constraint forall(i in 1..m)(positions[n+i] == 0);
+% (7)
+constraint all_different_except_0(successors);
+% (8) (9)
+constraint forall(i in 1..n+m)(element(successors[i], assignments, assignments[i]) /\ successors[i] != i);
+% (10.1)
 constraint forall(i in 1..n+m)(
   element(successors[i], positions, positions[i] + 1)
 );
-
+% (11.2)
+constraint int_set_channel([assignments[i] | i in N], b);
+% (12)
+constraint forall(i in K)(sum([s[j] | j in b[i]]) <= l[i]);
+% (13.2)
 constraint forall(i in 1..n+m)(
- element(i, dp, D[i, successors[i]])
+  element(i, dp, D[i, successors[i]])
+);
+% Objective variable
+constraint forall(i in K) (
+ distances[i] = sum([dp[j] | j in b[i]]) + dp[n+i]
 );
 
-constraint
-  forall(i in COURIERS) (
-    dists[i] = sum([dp[j] | j in b[i]]) + dp[n+i]
-  );
-  
-%%%% SYMMETRY BREAKING %%%%%
+%%%%%% CAPACITY SUM %%%%%%
+% (21)
+constraint forall(i in V)(
+  cps[i] <= l[assignments[i]]
+);
+constraint forall(i in 1..m)(
+  cps[n+i] == 0
+);
+% (20)
+constraint forall(i in 1..n)(
+  element(successors[i], cps, cps[i] + s[i])
+);
 
-constraint forall(i in 1..m-1)(successors[n+i] < successors[n+i+1]); % symmetry breaking
-
-%%%% LINKING assignments and successors %%%%%
+%%%%%% LINKING assignments and successors %%%%%%
 
 constraint forall(i in 1..m)(
   y[n+i] = 100*assignments[n+i] + successors[n+i]
 );
 
-%%%% PREDECESSORS %%%%%
+
+
+
+
+%%%%%% PREDECESSORS (IMPLIED) %%%%%%
 
 constraint forall(i, k in 1..n+m)(
   predecessors[k] = i <-> successors[i] = k
@@ -84,28 +87,17 @@ constraint forall(i in 1..m)(
   predecessors[n+m+i] = n+i
 );
 
-%%%% CAPACITY SUM %%%%%
+%%%%%% SYMMETRY BREAKING %%%%%%
 
-constraint forall(i in NODES)(
-  cps[i] <= l[assignments[i]]
-); % 21
+%constraint forall(i in 1..m-1)(successors[n+i] < successors[n+i+1]);
+%Symmetry breaking for vehicles with equal capacities
+constraint forall(i in 1..m-1, j in i+1..m where l[i] == l[j]) (successors[n+i] < successors[n+j]);
+%Symmetry breaking for vehicles with different capacities
+constraint forall(i in 1..m-1, j in i+1..m where l[i] > l[j]) (successors[n+i] < successors[n+j]);
 
-
-constraint forall(i in 1..m)(
-  cps[n+i] == 0
-);
-
-constraint forall(i in 1..n)(
-  element(successors[i], cps, cps[i] + s[i])
-); % 20
-
-
-% constraint forall(i in NODES)(
-%   element(i, dps, D[i, successors[i]])
-% );
+%%%%%% SEARCH %%%%%%
 
 solve
-       %:: int_search(successors, dom_w_deg, indomain_min)
-%       :: restart_luby(100)
-      %:: int_search(dp, max_regret, indomain_min)
-      minimize max(dists);
+%:: int_search(successors, dom_w_deg, indomain_min)
+%:: restart_luby(100)
+%:: int_search(dp, max_regret, indomain_min)
