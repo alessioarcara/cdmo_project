@@ -100,5 +100,22 @@
                 6
             ]
         ]
+    },
+    "three_index_vehicle_flow_gcg": {
+        "time": 8,
+        "optimal": true,
+        "obj": 14,
+        "sol": [
+            [
+                4,
+                3,
+                1
+            ],
+            [
+                2,
+                5,
+                6
+            ]
+        ]
     }
 }
