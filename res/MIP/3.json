@@ -99,26 +99,6 @@
             ]
         ]
     },
-    "three_index_vehicle_flow_gcg": {
-        "time": 1,
-        "optimal": true,
-        "obj": 12,
-        "sol": [
-            [
-                5,
-                6,
-                3
-            ],
-            [
-                4,
-                2
-            ],
-            [
-                1,
-                7
-            ]
-        ]
-    },
     "three_index_vehicle_flow_SB_highs_WM": {
         "time": 0,
         "optimal": true,
@@ -136,6 +116,26 @@
             [
                 6,
                 1
+            ]
+        ]
+    },
+    "three_index_vehicle_flow_gcg": {
+        "time": 1,
+        "optimal": true,
+        "obj": 12,
+        "sol": [
+            [
+                5,
+                6,
+                3
+            ],
+            [
+                4,
+                2
+            ],
+            [
+                1,
+                7
             ]
         ]
     }

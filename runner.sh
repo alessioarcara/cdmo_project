@@ -10,6 +10,6 @@ SCRIPT="mcp.py"
 for i in $(seq -w $LOWER_BOUND $UPPER_BOUND); do 
     INSTANCE="./Instances/inst$i.dat"
 
-    python $SCRIPT $INSTANCE $METHOD $MODEL $SOLVER 275 true
+    python $SCRIPT $INSTANCE $METHOD $MODEL $SOLVER 275
 
 done

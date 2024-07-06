@@ -107,3 +107,13 @@ def make_initial_routes(n, capacities, s, D):
             curr_node = next_node
         routes[k] = [route]
     return routes
+
+
+def print_result(solving_time, solve_result, obj, sol, is_valid):
+    print(f"\n{'='*50}")
+    print(f"{'Valid' if is_valid else 'Invalid'} solution found!")
+    print(f"Solving time: {solving_time:.2f} seconds")
+    print(f"Solve result: {solve_result}")
+    print(f"sol: {obj}")
+    print(f"sol: {sol}")
+    print(f"{'='*50}\n")

@@ -1,5 +1,6 @@
 import sys
 from util import (MethodType,
+                  print_result,
                   read_instances,
                   expand_matrix,
                   measure_solve_time,
@@ -115,22 +116,11 @@ def solve_with_mip(
     solving_time = measure_solve_time(solve)
     solve_result = ampl.get_value("solve_result")
     obj = ampl.getObjective('MaxCourDist').value()
-
-    print(f"\n{'='*50}")
-    print(f'solving_time: {solving_time:.2f}')
-    print(f'solve_result: {solve_result}')
-    print(f"obj: {obj}")
-
-    if solve_result in ["infeasible", "unbounded"] or solving_time > 300 or obj == 0.0:
-        print("Invalid solution")
-        print(f"{'='*50}\n")
-        return
-
     optimal = solve_result == "solved"
 
     x = ampl.getVariable('x').getValues().toDict()
     sol = []
-    depot = n+1
+    depot = n + 1
 
     # Extract solution
     for k in range(1, m + 1):
@@ -152,8 +142,10 @@ def solve_with_mip(
 
         sol.append(route)
 
-    print(f'sol: {sol}')
-    print(f"{'='*50}\n")
+    if solve_result in ["infeasible", "unbounded"] or solving_time > 300 or obj == 0.0 or all(len(route) == 0 for route in sol):
+        print_result(solving_time, solve_result, obj, sol, False)
+        return
+    print_result(solving_time, solve_result, obj, sol, True)
 
     instance = extract_integer_from_filename(file_name)
     key = f'{model_name}_{solver_name}' + ('_WM' if use_warm_start else '')
