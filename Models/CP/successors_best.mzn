@@ -83,7 +83,7 @@ constraint forall(i, k in V)(
   predecessors[k] = i <-> successors[i] = k
 );
 
-%%%%%% CAPACITY SUM %%%%%%
+%%%%%% CAPACITY SUM (IMPLIED) %%%%%%
 
 constraint forall(i in N)(
   element(successors[i], cps, cps[i] + s[i])

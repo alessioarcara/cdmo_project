@@ -1,5 +1,5 @@
 {
-    "successors_gecode": {
+    "successors_DWD_MIN_chuffed": {
         "time": 0,
         "optimal": true,
         "obj": 206,
@@ -13,7 +13,7 @@
             ]
         ]
     },
-    "successors_SB_gecode": {
+    "successors_gecode": {
         "time": 0,
         "optimal": true,
         "obj": 206,
