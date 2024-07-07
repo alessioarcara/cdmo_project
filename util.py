@@ -4,6 +4,7 @@ from enum import Enum
 class MethodType(Enum):
     CP = 'cp'
     SAT = 'sat'
+    SMT = 'smt'
     MIP = 'mip'
 
 
