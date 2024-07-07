@@ -77,5 +77,9 @@ constraint forall(i in N)(
   element(successors[i], cps, cps[i] + s[i])
 );
 
-
-solve minimize max(distances);
+%%%%%% SEARCH %%%%%%
+solve :: seq_search([
+    int_search(successors, dom_w_deg, indomain_min),
+    restart_luby(100),
+])
+minimize max(distances);
