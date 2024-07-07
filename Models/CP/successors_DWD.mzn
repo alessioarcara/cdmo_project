@@ -93,6 +93,5 @@ constraint forall(k1, k2 in K where k1 < k2 /\ l[k1] == l[k2]) (
 solve :: seq_search([
     int_search(successors, dom_w_deg, indomain_min),  
     restart_luby(100),
-    relax_and_reconstruct(successors, 90)
 ])
 minimize max(distances);

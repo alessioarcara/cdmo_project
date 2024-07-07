@@ -90,9 +90,8 @@ constraint forall(i in N)(
 );
 
 %%%%%% SEARCH %%%%%%
-
-solve
-%:: int_search(successors, dom_w_deg, indomain_random)
-%:: restart_luby(100)
-%:: int_search(dp, max_regret, indomain_min)
+solve :: seq_search([
+    int_search(successors, dom_w_deg, indomain_min),
+    restart_luby(100),
+])
 minimize max(distances);
