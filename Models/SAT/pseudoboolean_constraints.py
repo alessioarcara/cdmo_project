@@ -1,4 +1,66 @@
 from z3 import *
+from functools import reduce
+    
+def ld_int(x):
+    ld_return = 0
+    for i in range(31):
+        if (x & (1 << i)) > 0:
+            ld_return = i + 1
+    return ld_return
+
+def num_to_bits(n, num):
+    number = num
+    bits = []
+    for i in range(n - 1, -1, -1):
+        tmp = 1 << i
+        if number < tmp:
+            bits.append(False)
+        else:
+            bits.append(True)
+            number -= tmp
+    bits.reverse()
+    return bits
+
+def normal_form(lits, coeffs, rhs):
+    assert(len(lits) == len(coeffs))
+    simplified_lits = [] 
+    simplified_coeffs = []
+
+    simplified_lits = lits.copy()
+    simplified_coeffs = coeffs.copy()
+
+    # Greater-than constraints are changed into less-than constraints by negating all constants
+    # simplified_coeffs = [-1 * i for i in simplified_coeffs]
+    # rhs = -rhs
+    
+    # Negative coefficients are eliminated by changing p into Not(p) and updating the RHS
+    for i in range(len(simplified_coeffs)):
+        if simplified_coeffs[i] < 0:
+            simplified_lits[i] = Not(simplified_lits[i])
+            simplified_coeffs[i] = -1 * simplified_coeffs[i]
+            rhs += simplified_coeffs[i]
+
+    # The coefficients are sorted in ascending order
+    combined = list(zip(simplified_coeffs, simplified_lits))
+    combined.sort(key=lambda x: x[0])
+    simplified_coeffs, simplified_lits = zip(*combined)
+    
+    simplified_coeffs = list(simplified_coeffs)
+    simplified_lits = list(simplified_lits)
+    
+    # Coefficients greater than the RHS are trimmed to (replaced with) the RHS
+    for i in range(len(simplified_coeffs)):
+        if simplified_coeffs[i] > rhs:
+             simplified_coeffs[i] = rhs
+
+    # The coefficients of the LHS are divided by their greatest common divisor (“gcd”)
+    # The RHS is replaced by “RHS/gcd”, rounded upwards
+    gcd = reduce(math.gcd, simplified_coeffs)
+    for i in range(len(simplified_coeffs)):
+        simplified_coeffs[i] = int(simplified_coeffs[i] / gcd)
+    rhs = math.floor(rhs / gcd)
+
+    return simplified_lits, simplified_coeffs, rhs
 
 def encode(lits, coeffs, rhs):
     simplified_lits = [] 
@@ -18,8 +80,8 @@ def encode(lits, coeffs, rhs):
             
     return simplified_lits, simplified_coeffs, result
     
-def Pb_seq_counter(bool_vars, coeffs, k, name):
-    bool_vars, coeffs, precondition = encode(bool_vars, coeffs, k)
+def Pb_seq_counter(bool_vars, coeffs, k, name):    
+    bool_vars, coeffs, k = normal_form(bool_vars, coeffs, k)
     
     constraints = []
     n = len(bool_vars)
@@ -36,7 +98,6 @@ def Pb_seq_counter(bool_vars, coeffs, k, name):
         if i >= 2:
             constraints.append(Or(Not(seq_auxiliary[i - 1][k + 1 - wi]), Not(bool_vars[i - 1])))
 
-    constraints.extend(precondition)
     return constraints
 
 def Pb_adder_networks(bool_vars, coeffs, k):
@@ -72,19 +133,6 @@ def Pb_adder_networks(bool_vars, coeffs, k):
                 buckets[i + 1].append(ha_carry(x, y))
             result[i] = buckets[i].pop(0)
             i += 1
-            
-    def num_to_bits(n, num):
-        number = num
-        bits = []
-        for i in range(n - 1, -1, -1):
-            tmp = 1 << i
-            if number < tmp:
-                bits.append(False)
-            else:
-                bits.append(True)
-                number -= tmp
-        bits.reverse()
-        return bits
 
     def less_than_or_equal(xs, ys):
         assert len(xs) == len(ys)
@@ -155,7 +203,7 @@ def Pb_adder_networks(bool_vars, coeffs, k):
         formula.append(Or(a, Not(b), x))
         return x
 
-    bool_vars, coeffs, precondition = encode(bool_vars, coeffs, k)
+    bool_vars, coeffs, k = normal_form(bool_vars, coeffs, k)
 
     result = []
     formula = []
@@ -172,5 +220,4 @@ def Pb_adder_networks(bool_vars, coeffs, k):
     kBits = num_to_bits(len(buckets), k)
     constraints = less_than_or_equal(result, kBits)
     formula.extend(constraints)
-    formula.extend(precondition)
     return formula
