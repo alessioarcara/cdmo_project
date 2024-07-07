@@ -1,0 +1,16 @@
+{
+    "successors_DWD_MIN_chuffed": {
+        "time": 0,
+        "optimal": true,
+        "obj": 206,
+        "sol": [
+            [
+                2
+            ],
+            [
+                1,
+                3
+            ]
+        ]
+    }
+}
