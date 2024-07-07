@@ -26,5 +26,173 @@
                 7
             ]
         ]
+    },
+    "successors_FF_MIN_chuffed": {
+        "time": 9,
+        "optimal": true,
+        "obj": 226,
+        "sol": [
+            [
+                2,
+                3
+            ],
+            [
+                8
+            ],
+            [
+                6
+            ],
+            [
+                1,
+                4
+            ],
+            [
+                9
+            ],
+            [
+                5,
+                7
+            ]
+        ]
+    },
+    "successors_LNS_RND_gecode": {
+        "time": 13,
+        "optimal": true,
+        "obj": 226,
+        "sol": [
+            [
+                9,
+                8
+            ],
+            [
+                6
+            ],
+            [
+                4
+            ],
+            [
+                5
+            ],
+            [
+                3,
+                2,
+                7
+            ],
+            [
+                1
+            ]
+        ]
+    },
+    "successors_FF_MIN_gecode": {
+        "time": 162,
+        "optimal": true,
+        "obj": 226,
+        "sol": [
+            [
+                2,
+                3
+            ],
+            [
+                7,
+                9
+            ],
+            [
+                6
+            ],
+            [
+                1,
+                4
+            ],
+            [
+                8
+            ],
+            [
+                5
+            ]
+        ]
+    },
+    "successors_LNS_chuffed": {
+        "time": 2,
+        "optimal": true,
+        "obj": 226,
+        "sol": [
+            [
+                5
+            ],
+            [
+                8
+            ],
+            [
+                6
+            ],
+            [
+                2
+            ],
+            [
+                1,
+                4
+            ],
+            [
+                9,
+                7,
+                3
+            ]
+        ]
+    },
+    "successors_REG_chuffed": {
+        "time": 2,
+        "optimal": true,
+        "obj": 226,
+        "sol": [
+            [
+                5
+            ],
+            [
+                8
+            ],
+            [
+                6
+            ],
+            [
+                2
+            ],
+            [
+                1,
+                4
+            ],
+            [
+                9,
+                7,
+                3
+            ]
+        ]
+    },
+    "successors_Y_DWD_chuffed": {
+        "time": 2,
+        "optimal": true,
+        "obj": 226,
+        "sol": [
+            [
+                9,
+                3
+            ],
+            [
+                8
+            ],
+            [
+                6
+            ],
+            [
+                2
+            ],
+            [
+                1,
+                4
+            ],
+            [
+                5,
+                7
+            ]
+        ]
     }
 }
