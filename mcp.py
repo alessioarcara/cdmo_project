@@ -11,7 +11,7 @@ from util import (MethodType,
 def print_usage():
     print("Usage: python mcp.py <file_name> <model_type> <model_name> <solver_name> <timeout_seconds> [use_warm_start]")
     print("  <file_name>: Path to the instance file")
-    print("  <model_type>: 'cp', 'sat' or 'mip'")
+    print("  <model_type>: 'cp', 'sat', 'smt' or 'mip'")
     print("  <model_name>: Name of the model to use")
     print("  <solver_name>: Name of the solver to use")
     print("  <timeout_seconds>: Timeout in seconds")
@@ -78,17 +78,35 @@ def solve_with_cp(file_name, model_name, solver_name, timeout_seconds):
         print_result(solving_time, result.status, None, None, False)
 
 
-def solve_with_sat(file_name, solver, timeout_seconds, model='swc'):
+def solve_with_sat(file_name, model_name, solver, timeout_seconds, search='binary'):
     from Models.SAT.sat_model import sat_model
     m, n, l, s, D = read_instances(file_name)
-    obj, time, sol = sat_model(m, n, s, l, D, symmetry_breaking = False, implied_constraint = True, timeout_duration=timeout_seconds)
+    
+    if solver == 'Z3':
+        obj, time, sol = sat_model(m, n, s, l, D, symmetry_breaking=False, implied_constraint=True, timeout_duration=timeout_seconds)
+    elif solver == 'glucose':
+        obj, time, sol = None, timeout_seconds, None
+    elif solver == 'minisat':
+        obj, time, sol = None, timeout_seconds, None
+    else:
+        raise ValueError(f"Unknown solver: {solver}")
 
-    optimal = True if time < timeout_seconds else False
-
+    optimal = time < timeout_seconds
     instance = extract_integer_from_filename(file_name)
+    write_json_file(f'{model_name}_{solver}_{search}', obj, time, optimal, sol, f'./res/SAT/{instance}.json')
 
-    write_json_file(f'{model}_{solver}', obj, time, optimal, sol, f'./res/SAT/{instance}.json')
+def solve_with_smt(file_name, model_name, solver, timeout_seconds, search='linear'):
+    from Models.SMT.smt_model import smt_model
+    m, n, l, s, D = read_instances(file_name)
+    
+    if solver == 'Z3':
+        obj, time, sol = smt_model(m, n, s, l, D, implied_constraint = True, search=search, timeout_duration=timeout_seconds)
+    else:
+        raise ValueError(f"Unknown solver: {solver}")
 
+    optimal = time < timeout_seconds
+    instance = extract_integer_from_filename(file_name)
+    write_json_file(f'{model_name}_{solver}_{search}', obj, time, optimal, sol, f'./res/SMT/{instance}.json')
 
 def solve_with_mip(
         file_name,
@@ -220,7 +238,9 @@ if __name__ == "__main__":
         if model_type == MethodType.CP:
             solve_with_cp(file_name, model_name, solver_name, timeout_seconds)
         elif model_type == MethodType.SAT:
-            solve_with_sat(file_name, solver_name, timeout_seconds)
+            solve_with_sat(file_name, model_name, solver_name, timeout_seconds)
+        elif model_type == MethodType.SMT:
+            solve_with_smt(file_name, model_name, solver_name, timeout_seconds)
         elif model_type == MethodType.MIP:
             solve_with_mip(file_name, model_name, solver_name, timeout_seconds,
                            use_warm_start=use_warm_start)
