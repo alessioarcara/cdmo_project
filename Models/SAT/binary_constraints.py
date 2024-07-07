@@ -37,4 +37,3 @@ def lex_less_equal(v1, v2):
             constraints.append(Implies(And([v1[j] == v2[j] for j in range(i)]), Or(Not(v1[i]), v2[i])))
     
     return And(constraints)
-    
