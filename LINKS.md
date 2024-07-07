@@ -1,0 +1,28 @@
+# Resources
+
+* CP 
+    - https://hal.science/hal-02181527/file/Verolog_2019_Bourreau.pdf#page43
+    - https://www.youtube.com/watch?v=egx9ZiU9v14
+    - https://or.stackexchange.com/questions/6765/vrp-through-constraint-programming
+* SAT 
+    - https://arxiv.org/pdf/2206.06618
+* SMT
+    - https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9480202 
+    - https://www.researchgate.net/publication/352396704_An_SMT_Based_Compositional_Model_to_Solve_a_Conflict-Free_Electric_Vehicle_Routing_Problem
+* MIP
+    - https://how-to.aimms.com/Articles/332/332-Formulation-CVRP.html
+    - https://www.researchgate.net/publication/323173028_Two_models_of_the_capacitated_vehicle_routing_problem/fulltext/5a84385b0f7e9b2c3f4f3c69/Two-models-of-the-capacitated-vehicle-routing-problem.pdf?origin=publication_detail&_tp=eyJjb250ZXh0Ijp7ImZpcnN0UGFnZSI6InB1YmxpY2F0aW9uIiwicGFnZSI6InB1YmxpY2F0aW9uRG93bmxvYWQiLCJwcmV2aW91c1BhZ2UiOiJwdWJsaWNhdGlvbiJ9fQ
+    - https://convegni.unica.it/odysseus2018/files/2018/06/bpc_vr_desaulniers.pdf#page43
+    - https://medium.com/@sean-patrick-kelley/how-to-implement-column-generation-for-vehicle-routing-bdb8027c957f
+    - https://colab.research.google.com/github/Gurobi/modeling-examples/blob/master/traveling_salesman/tsp.ipynb
+    - https://www.dii.uchile.cl/wp-content/uploads/2015/09/2014-Branch-and-price-and-constraint-programming-for-solving-a-real-life-technician-dispatching-problem.pdf
+* COL_GEN
+    - http://www.science4all.org/article/column-generation/
+    - https://medium.com/@shannon-optimizes/how-to-implement-column-generation-for-vehicle-routing-bdb8027c957f
+    - https://emrahcimren.github.io/operations%20research/Solving-Single-Depot-Capacitated-Vehicle-Routing-Problem-Using-Column-Generation-with-Python/
+    - https://repub.eur.nl/pub/135594/EI2021-01.pdf
+    - https://how-to.aimms.com/Articles/332/332-Miller-Tucker-Zemlin-formulation.html
+    - https://onlinelibrary.wiley.com/doi/10.1155/2013/824961
+    - https://school.a4cp.org/summer2017/slidedecks/Introduction-to-Column-Generation-and-hybrid-methods-for-Homecare-Routing.pdf
+    - https://theses.hal.science/tel-01078006/document
+    - http://www.simagi.polymtl.ca/congresgi/cigi2015/Articles/CIGI_2015_submission_32.pdf

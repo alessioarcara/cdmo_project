@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
     "successors_DWD_chuffed": {
+=======
+    "successors_LNS_chuffed": {
+>>>>>>> 9bc350d401430f696977bb2f49a0064e9e458597
         "time": 300,
         "optimal": false,
         "obj": 1498,
