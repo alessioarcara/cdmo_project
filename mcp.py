@@ -18,12 +18,12 @@ def print_usage():
     print("  [use_warm_start]: Optional. 'true' to use warm start (only applicable for HiGHS solver in MIP)")
 
 
-def solve_with_cp(file_name, model, solver, timeout_seconds):
-    from minizinc import Model, Solver, Instance
+def solve_with_cp(file_name, model_name, solver_name, timeout_seconds):
+    from minizinc import Model, Solver, Instance, Status
     from datetime import timedelta
     m, n, l, s, D = read_instances(file_name)
-    model = Model(f'./Models/{model}.mzn')
-    solver = Solver.lookup(solver)
+    model = Model(f'./Models/CP/{model_name}.mzn')
+    solver = Solver.lookup(solver_name)
     instance = Instance(solver, model)
 
     instance["m"] = m
@@ -33,12 +33,50 @@ def solve_with_cp(file_name, model, solver, timeout_seconds):
     instance["D"] = expand_matrix(D, m)
 
     print(f"n={n}, m={m}")
-    print(f"l={l}")
 
-    result = instance.solve(timeout=timedelta(seconds=timeout_seconds))
+    def solve():
+        if solver_name == "chuffed":
+            return instance.solve(free_search=True, timeout=timedelta(seconds=timeout_seconds))
+        else:
+            return instance.solve(timeout=timedelta(seconds=timeout_seconds))
 
-    print(result.statistics)
+    result, solving_time = measure_solve_time(solve)
     print(result)
+
+    if result.status == Status.SATISFIED or result.status == Status.OPTIMAL_SOLUTION:
+
+        optimal = result.status == Status.OPTIMAL_SOLUTION
+        obj = result["objective"]
+
+        successors = result["successors"]
+
+        def extract_route(k):
+            route = []
+            curr = n + k
+            while True:
+                if curr <= n:
+                    route.append(curr)
+                curr = successors[curr - 1]
+                if curr == 0:
+                    break
+            return route
+
+        sol = [extract_route(i) for i in range(1, m+1)]
+
+        print_result(solving_time, optimal, obj, sol, True)
+        print(result.statistics)
+
+        instance = extract_integer_from_filename(file_name)
+        key = f'{model_name}_{solver_name}'
+        write_json_file(key,
+                        obj,
+                        solving_time,
+                        optimal,
+                        sol,
+                        f'./res/CP/{instance}.json')
+    else: 
+        print_result(solving_time, result.status, None, None, False)
+
 
 def solve_with_sat(file_name, model_name, solver, timeout_seconds, search='binary'):
     from Models.SAT.sat_model import sat_model
@@ -141,7 +179,7 @@ def solve_with_mip(
     elif solver_name == 'gcg':
         ampl.setOption(f'{solver_name}_options', f'timelimit={timeout_seconds} outlev=1')
 
-    solving_time = measure_solve_time(solve)
+    _, solving_time = measure_solve_time(solve)
     solve_result = ampl.get_value("solve_result")
     obj = ampl.getObjective('MaxCourDist').value()
     optimal = solve_result == "solved"

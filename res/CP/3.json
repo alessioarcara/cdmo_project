@@ -1,0 +1,162 @@
+{
+    "successors_SB_chuffed": {
+        "time": 0,
+        "optimal": true,
+        "obj": 12,
+        "sol": [
+            [
+                3,
+                6,
+                5
+            ],
+            [
+                4,
+                2
+            ],
+            [
+                1,
+                7
+            ]
+        ]
+    },
+    "successors_chuffed": {
+        "time": 0,
+        "optimal": true,
+        "obj": 12,
+        "sol": [
+            [
+                5,
+                4,
+                2
+            ],
+            [
+                3,
+                6
+            ],
+            [
+                1,
+                7
+            ]
+        ]
+    },
+    "successors_IMP_chuffed": {
+        "time": 0,
+        "optimal": true,
+        "obj": 12,
+        "sol": [
+            [
+                3,
+                6,
+                5
+            ],
+            [
+                4,
+                2
+            ],
+            [
+                1,
+                7
+            ]
+        ]
+    },
+    "successors_gecode": {
+        "time": 1,
+        "optimal": true,
+        "obj": 12,
+        "sol": [
+            [
+                5,
+                4,
+                2
+            ],
+            [
+                3,
+                7
+            ],
+            [
+                6,
+                1
+            ]
+        ]
+    },
+    "successors_IMP_gecode": {
+        "time": 0,
+        "optimal": true,
+        "obj": 12,
+        "sol": [
+            [
+                5,
+                4,
+                2
+            ],
+            [
+                7,
+                3
+            ],
+            [
+                1,
+                6
+            ]
+        ]
+    },
+    "successors_SB_gecode": {
+        "time": 0,
+        "optimal": true,
+        "obj": 12,
+        "sol": [
+            [
+                5,
+                4,
+                2
+            ],
+            [
+                7,
+                3
+            ],
+            [
+                1,
+                6
+            ]
+        ]
+    },
+    "successors_best_chuffed": {
+        "time": 0,
+        "optimal": true,
+        "obj": 12,
+        "sol": [
+            [
+                3,
+                6,
+                5
+            ],
+            [
+                4,
+                2
+            ],
+            [
+                1,
+                7
+            ]
+        ]
+    },
+    "successors_best_gecode": {
+        "time": 0,
+        "optimal": true,
+        "obj": 12,
+        "sol": [
+            [
+                5,
+                4,
+                2
+            ],
+            [
+                7,
+                3
+            ],
+            [
+                1,
+                6
+            ]
+        ]
+    }
+}

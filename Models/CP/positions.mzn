@@ -1,10 +1,10 @@
 include "alldifferent.mzn";
 
-int: m;
-int: n;
-set of int: COURIERS = 1..m;
-set of int: ITEMS = 1..n;
-
+ int: m;
+ int: n;
+ set of int: COURIERS = 1..m;
+ set of int: ITEMS = 1..n;
+ 
 array[COURIERS] of int: l;  
 array[ITEMS] of int: s;
 array[1..n+1, 1..n+1] of int: D;
@@ -14,7 +14,7 @@ array [COURIERS, ITEMS] of var 0..n: X;
 constraint all_different_except_0(X);
 constraint sum(X) == (n*(n+1))/2;
 constraint forall(i in COURIERS, j in 1..n-1)(X[i, j] == 0 -> forall(k in j+1..n)(X[i,k] == 0));
-%constraint forall(i in COURIERS)(X[i,1] > 0);
+constraint forall(i in COURIERS)(X[i,1] > 0);
 
 array[COURIERS] of var int: total_distance;
 constraint
