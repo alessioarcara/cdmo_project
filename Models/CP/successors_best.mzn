@@ -47,6 +47,7 @@ constraint forall(i in 1..n+m)(
 constraint int_set_channel([assignments[i] | i in N], b);
 % (12)
 constraint forall(i in K)(sum([s[j] | j in b[i]]) <= l[i]);
+% (12-cumulative)
 %constraint forall(k in K)(
 %  let {
 %    array[int] of var int: courier_assignments = [equality(assignments[j], k)| j in N],
@@ -66,6 +67,15 @@ constraint forall(i in K) (
 );
 
 
+%%%%%% SYMMETRY BREAKING %%%%%%
+
+constraint forall(k1, k2 in K where k1 < k2 /\ l[k1] == l[k2]) (
+    lex_lesseq(
+        [equality(assignments[i], k1) | i in N], 
+        [equality(assignments[i], k2) | i in N]
+    )
+);
+
 %%%%%% PREDECESSORS (IMPLIED) %%%%%%
 % redundant constraint but better propagation
 
@@ -77,16 +87,6 @@ constraint forall(i, k in V)(
 
 constraint forall(i in N)(
   element(successors[i], cps, cps[i] + s[i])
-);
-
-%%%%%% SYMMETRY BREAKING %%%%%%
-
-
-constraint forall(k1, k2 in K where k1 < k2 /\ l[k1] == l[k2]) (
-    lex_lesseq(
-        [equality(assignments[i], k1) | i in N], 
-        [equality(assignments[i], k2) | i in N]
-    )
 );
 
 %%%%%% SEARCH %%%%%%

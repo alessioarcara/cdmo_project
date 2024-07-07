@@ -27,227 +27,59 @@
             ]
         ]
     },
-    "successors_IMPLIED_gecode": {
-        "time": 89,
+    "successors_SB_gecode": {
+        "time": 20,
         "optimal": true,
         "obj": 226,
         "sol": [
-            [
-                8,
-                9,
-                6
-            ],
-            [
-                5,
-                7
-            ],
-            [
-                4
-            ],
-            [
-                3
-            ],
-            [
-                2
-            ],
-            [
-                1
-            ]
-        ]
-    },
-    "successors_IMPLIED_CPS_gecode": {
-        "time": 99,
-        "optimal": true,
-        "obj": 226,
-        "sol": [
-            [
-                8,
-                9,
-                6
-            ],
-            [
-                5,
-                7
-            ],
-            [
-                4
-            ],
-            [
-                3
-            ],
-            [
-                2
-            ],
-            [
-                1
-            ]
-        ]
-    },
-    "successors_IMPLIED_CPS_LINKING_gecode": {
-        "time": 103,
-        "optimal": true,
-        "obj": 226,
-        "sol": [
-            [
-                8,
-                9,
-                6
-            ],
-            [
-                5,
-                7
-            ],
-            [
-                4
-            ],
-            [
-                3
-            ],
-            [
-                2
-            ],
-            [
-                1
-            ]
-        ]
-    },
-    "successors_SEARCH_gecode": {
-        "time": 300,
-        "optimal": false,
-        "obj": 226,
-        "sol": [
-            [
-                1,
-                4
-            ],
-            [
-                7
-            ],
-            [
-                8
-            ],
-            [
-                6
-            ],
-            [
-                2,
-                3
-            ],
-            [
-                9,
-                5
-            ]
-        ]
-    },
-    "successors_best_prev_chuffed": {
-        "time": 1,
-        "optimal": true,
-        "obj": 226,
-        "sol": [
-            [
-                7
-            ],
             [
                 8,
                 9
             ],
             [
-                5
-            ],
-            [
-                6
-            ],
-            [
-                2,
-                3
-            ],
-            [
-                1,
-                4
-            ]
-        ]
-    },
-    "successors_best_prev_gecode": {
-        "time": 133,
-        "optimal": true,
-        "obj": 226,
-        "sol": [
-            [
-                8,
-                9,
-                6
-            ],
-            [
+                3,
                 5,
                 7
             ],
             [
+                2
+            ],
+            [
                 4
             ],
             [
-                3
-            ],
-            [
-                2
+                6
             ],
             [
                 1
             ]
         ]
     },
-    "successors_best_gecode": {
-        "time": 17,
-        "optimal": true,
+    "successors_SB_IMP_gecode": {
+        "time": 300,
+        "optimal": false,
         "obj": 226,
         "sol": [
             [
-                9,
-                3
+                8,
+                9
             ],
             [
-                1,
-                4
-            ],
-            [
-                5
-            ],
-            [
-                6
-            ],
-            [
-                2,
-                7
-            ],
-            [
-                8
-            ]
-        ]
-    },
-    "successors_best_chuffed": {
-        "time": 1,
-        "optimal": true,
-        "obj": 226,
-        "sol": [
-            [
-                5
-            ],
-            [
-                8
-            ],
-            [
-                9,
                 3,
+                5,
                 7
             ],
             [
                 2
             ],
             [
+                4
+            ],
+            [
                 6
             ],
             [
-                1,
-                4
+                1
             ]
         ]
     }
