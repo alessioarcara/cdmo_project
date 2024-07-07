@@ -38,6 +38,7 @@ def solve_with_cp(file_name, model_name, solver_name, timeout_seconds):
         return instance.solve(timeout=timedelta(seconds=timeout_seconds))
     
     result, solving_time = measure_solve_time(solve)
+    print(result)
 
     if result.status == Status.SATISFIED or result.status == Status.OPTIMAL_SOLUTION:
         

@@ -66,7 +66,7 @@ constraint
   
 %%%% SYMMETRY BREAKING %%%%%
 
-constraint forall(k1 in [1..m], k2 in [1..m] where k1 < k2 /\ l[k1] == l[k2]) (successors[n+k1] < successors[n+k2]);
+%constraint forall(k1 in [1..m], k2 in [1..m] where k1 < k2 /\ l[k1] == l[k2]) (successors[n+k1] < successors[n+k2]);
 
 %Symmetry breaking for vehicles with equal capacities
 %constraint forall(i in 1..m-1, j in i+1..m where l[i] == l[j]) (successors[n+i] < successors[n+j]);
