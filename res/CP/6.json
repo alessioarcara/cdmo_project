@@ -1,13 +1,40 @@
 {
+    "successors_DWD_MIN_chuffed": {
+        "time": 6,
+        "optimal": true,
+        "obj": 322,
+        "sol": [
+            [
+                6
+            ],
+            [
+                8
+            ],
+            [
+                5
+            ],
+            [
+                1,
+                2,
+                3
+            ],
+            [
+                4
+            ],
+            [
+                7
+            ]
+        ]
+    },
     "successors_gecode": {
         "time": 300,
         "optimal": false,
         "obj": 322,
         "sol": [
             [
+                7,
                 8,
-                4,
-                7
+                4
             ],
             [
                 6
@@ -23,33 +50,6 @@
             ],
             [
                 1
-            ]
-        ]
-    },
-    "successors_SB_gecode": {
-        "time": 4,
-        "optimal": true,
-        "obj": 322,
-        "sol": [
-            [
-                7,
-                8
-            ],
-            [
-                6
-            ],
-            [
-                4
-            ],
-            [
-                1,
-                2
-            ],
-            [
-                3
-            ],
-            [
-                5
             ]
         ]
     }

@@ -1,17 +1,45 @@
 {
+    "successors_DWD_MIN_chuffed": {
+        "time": 19,
+        "optimal": true,
+        "obj": 226,
+        "sol": [
+            [
+                2,
+                3
+            ],
+            [
+                8
+            ],
+            [
+                6
+            ],
+            [
+                1,
+                4
+            ],
+            [
+                9
+            ],
+            [
+                5,
+                7
+            ]
+        ]
+    },
     "successors_gecode": {
-        "time": 62,
+        "time": 61,
         "optimal": true,
         "obj": 226,
         "sol": [
             [
                 8,
-                9,
-                6
+                6,
+                9
             ],
             [
-                5,
-                7
+                7,
+                5
             ],
             [
                 4
@@ -21,62 +49,6 @@
             ],
             [
                 2
-            ],
-            [
-                1
-            ]
-        ]
-    },
-    "successors_SB_gecode": {
-        "time": 20,
-        "optimal": true,
-        "obj": 226,
-        "sol": [
-            [
-                8,
-                9
-            ],
-            [
-                3,
-                5,
-                7
-            ],
-            [
-                2
-            ],
-            [
-                4
-            ],
-            [
-                6
-            ],
-            [
-                1
-            ]
-        ]
-    },
-    "successors_SB_IMP_gecode": {
-        "time": 300,
-        "optimal": false,
-        "obj": 226,
-        "sol": [
-            [
-                8,
-                9
-            ],
-            [
-                3,
-                5,
-                7
-            ],
-            [
-                2
-            ],
-            [
-                4
-            ],
-            [
-                6
             ],
             [
                 1

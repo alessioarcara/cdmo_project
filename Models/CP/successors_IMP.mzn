@@ -23,8 +23,7 @@ array[1..n+m] of var 0..max(D): dp;            % array of arc travelled distance
 array[K] of var 1..sum(D): distances;          % array of total distance
 % Improvements
 array[V] of var 0..(n+2*m): predecessors;
-
-function var int: equality(var int: assignment_1, int:assignment_2) = if assignment_1 == assignment_2 then 1 else 0 endif;
+array[V] of var 0..max(l): cps;                % array of added capacities
 
 % Constraints
 % (2)
@@ -45,6 +44,16 @@ constraint forall(i in 1..n+m)(
 constraint int_set_channel([assignments[i] | i in N], b);
 % (12)
 constraint forall(i in K)(sum([s[j] | j in b[i]]) <= l[i]);
+% (12-cumulative)
+%constraint forall(k in K)(
+%  let {
+%    array[int] of var int: courier_assignments = [equality(assignments[j], k)| j in N],
+%    array[int] of var int: courier_durations = [1 | j in N],
+%    array[int] of var int: courier_resources = [if assignments[j] == k then s[j] else 0 endif | j in N],
+%    var int: courier_capacity = l[k]
+%  } in
+%  cumulative(courier_assignments, courier_durations, courier_resources, courier_capacity)
+%);
 % (13.2)
 constraint forall(i in 1..n+m)(
   element(i, dp, D[i, successors[i]])
@@ -55,20 +64,17 @@ constraint forall(i in K) (
 );
 
 
-%%%%%% SYMMETRY BREAKING %%%%%%
-
-constraint forall(k1, k2 in K where k1 < k2 /\ l[k1] == l[k2]) (
-    lex_lesseq(
-        [equality(assignments[i], k1) | i in N], 
-        [equality(assignments[i], k2) | i in N]
-    )
-);
-
 %%%%%% PREDECESSORS (IMPLIED) %%%%%%
 % redundant constraint but better propagation
 
 constraint forall(i, k in V)(
   predecessors[k] = i <-> successors[i] = k
+);
+
+%%%%%% CAPACITY SUM (IMPLIED) %%%%%%
+
+constraint forall(i in N)(
+  element(successors[i], cps, cps[i] + s[i])
 );
 
 

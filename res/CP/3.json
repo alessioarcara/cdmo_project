@@ -1,61 +1,41 @@
 {
+    "successors_DWD_MIN_chuffed": {
+        "time": 0,
+        "optimal": true,
+        "obj": 12,
+        "sol": [
+            [
+                5,
+                4,
+                2
+            ],
+            [
+                3,
+                7
+            ],
+            [
+                1,
+                6
+            ]
+        ]
+    },
     "successors_gecode": {
         "time": 0,
         "optimal": true,
         "obj": 12,
         "sol": [
             [
-                2,
+                5,
                 4,
-                5
+                2
             ],
             [
-                3,
-                7
+                7,
+                3
             ],
             [
-                1,
-                6
-            ]
-        ]
-    },
-    "successors_SB_gecode": {
-        "time": 0,
-        "optimal": true,
-        "obj": 12,
-        "sol": [
-            [
-                2,
-                4,
-                5
-            ],
-            [
-                3,
-                7
-            ],
-            [
-                1,
-                6
-            ]
-        ]
-    },
-    "successors_SB_IMP_gecode": {
-        "time": 0,
-        "optimal": true,
-        "obj": 12,
-        "sol": [
-            [
-                2,
-                4,
-                5
-            ],
-            [
-                3,
-                7
-            ],
-            [
-                1,
-                6
+                6,
+                1
             ]
         ]
     }

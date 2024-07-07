@@ -41,6 +41,16 @@ constraint forall(i in 1..n+m)(
 constraint int_set_channel([assignments[i] | i in N], b);
 % (12)
 constraint forall(i in K)(sum([s[j] | j in b[i]]) <= l[i]);
+% (12-cumulative)
+%constraint forall(k in K)(
+%  let {
+%    array[int] of var int: courier_assignments = [equality(assignments[j], k)| j in N],
+%    array[int] of var int: courier_durations = [1 | j in N],
+%    array[int] of var int: courier_resources = [if assignments[j] == k then s[j] else 0 endif | j in N],
+%    var int: courier_capacity = l[k]
+%  } in
+%  cumulative(courier_assignments, courier_durations, courier_resources, courier_capacity)
+%);
 % (13.2)
 constraint forall(i in 1..n+m)(
   element(i, dp, D[i, successors[i]])

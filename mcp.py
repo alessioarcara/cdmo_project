@@ -53,8 +53,8 @@ def solve_with_cp(file_name, model_name, solver_name, timeout_seconds):
             while True:
                 if curr <= n:
                     route.append(curr)
-                current = successors[curr - 1]
-                if current == 0:
+                curr = successors[curr - 1]
+                if curr == 0:
                     break
             return route
 
