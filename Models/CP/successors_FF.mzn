@@ -22,12 +22,9 @@ array[V] of var 0..n+1: positions;
 array[K] of var set of N: b;                   % array of assigned items to courier
 array[1..n+m] of var 0..max(D): dp;            % array of arc travelled distance
 array[K] of var 1..sum(D): distances;          % array of total distance
-<<<<<<<< HEAD:Models/CP/successors_FF.mzn
 % Improvements
 array[V] of var 0..(n+2*m): predecessors;
 array[V] of var 0..max(l): cps;                % array of added capacities
-========
->>>>>>>> d3d6daa3017aa757213bb8729a1c3d5e822a5ebb:Models/CP/successors_SB.mzn
 
 function var int: equality(var int: assignment_1, int:assignment_2) = if assignment_1 == assignment_2 then 1 else 0 endif;
 
@@ -50,10 +47,7 @@ constraint forall(i in 1..n+m)(
 constraint int_set_channel([assignments[i] | i in N], b);
 % (12)
 constraint forall(i in K)(sum([s[j] | j in b[i]]) <= l[i]);
-<<<<<<<< HEAD:Models/CP/successors_FF.mzn
-========
 % (12-cumulative)
->>>>>>>> d3d6daa3017aa757213bb8729a1c3d5e822a5ebb:Models/CP/successors_SB.mzn
 %constraint forall(k in K)(
 %  let {
 %    array[int] of var int: courier_assignments = [equality(assignments[j], k)| j in N],
@@ -72,8 +66,6 @@ constraint forall(i in K) (
   distances[i] = sum([dp[j] | j in b[i]]) + dp[n+i]
 );
 
-
-<<<<<<<< HEAD:Models/CP/successors_FF.mzn
 %%%%%% PREDECESSORS (IMPLIED) %%%%%%
 % redundant constraint but better propagation
 
@@ -89,17 +81,6 @@ constraint forall(i in N)(
 
 %%%%%% SYMMETRY BREAKING %%%%%%
 
-========
-%%%%%% SYMMETRY BREAKING %%%%%%
-
-constraint forall(k1, k2 in K where k1 < k2 /\ l[k1] == l[k2]) (
-    lex_lesseq(
-        [equality(assignments[i], k1) | i in N], 
-        [equality(assignments[i], k2) | i in N]
-    )
-);
->>>>>>>> d3d6daa3017aa757213bb8729a1c3d5e822a5ebb:Models/CP/successors_SB.mzn
-
 constraint forall(k1, k2 in K where k1 < k2 /\ l[k1] == l[k2]) (
     lex_lesseq(
         [equality(assignments[i], k1) | i in N], 
@@ -107,7 +88,6 @@ constraint forall(k1, k2 in K where k1 < k2 /\ l[k1] == l[k2]) (
     )
 );
 
-<<<<<<<< HEAD:Models/CP/successors_FF.mzn
 %%%%%% SEARCH %%%%%%
 solve :: seq_search([
     int_search(successors, first_fail, indomain_min),
@@ -115,6 +95,3 @@ solve :: seq_search([
     relax_and_reconstruct(successors, 90)
 ])
 minimize max(distances);
-========
-solve minimize max(distances);
->>>>>>>> d3d6daa3017aa757213bb8729a1c3d5e822a5ebb:Models/CP/successors_SB.mzn
