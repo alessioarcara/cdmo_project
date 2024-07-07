@@ -1,3 +1,6 @@
 minizinc
 amplpy
 z3-solver
+numpy
+matplotlib
+networkx
