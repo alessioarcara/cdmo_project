@@ -1,86 +1,38 @@
 {
-    "successors_DWD_MIN_chuffed": {
-        "time": 0,
-        "optimal": true,
-        "obj": 206,
-        "sol": [
-            [
-                2
-            ],
-            [
-                1,
-                3
-            ]
-        ]
-    },
-    "successors_FF_MIN_chuffed": {
-        "time": 0,
-        "optimal": true,
-        "obj": 206,
-        "sol": [
-            [
-                2
-            ],
-            [
-                1,
-                3
-            ]
-        ]
-    },
-    "successors_LNS_chuffed": {
-        "time": 0,
-        "optimal": true,
-        "obj": 206,
-        "sol": [
-            [
-                2
-            ],
-            [
-                1,
-                3
-            ]
-        ]
-    },
-    "successors_FF_MIN_gecode": {
-        "time": 0,
-        "optimal": true,
-        "obj": 206,
-        "sol": [
-            [
-                2
-            ],
-            [
-                1,
-                3
-            ]
-        ]
-    },
-    "successors_REG_chuffed": {
-        "time": 0,
-        "optimal": true,
-        "obj": 206,
-        "sol": [
-            [
-                2
-            ],
-            [
-                1,
-                3
-            ]
-        ]
-    },
-    "successors_Y_DWD_chuffed": {
-        "time": 0,
-        "optimal": true,
-        "obj": 206,
-        "sol": [
-            [
-                2
-            ],
-            [
-                1,
-                3
-            ]
-        ]
-    }
+  "successors_DWD_MIN_chuffed": {
+    "time": 0,
+    "optimal": true,
+    "obj": 206,
+    "sol": [[2], [1, 3]]
+  },
+  "successors_FF_MIN_chuffed": {
+    "time": 0,
+    "optimal": true,
+    "obj": 206,
+    "sol": [[2], [1, 3]]
+  },
+  "successors_LNS_chuffed": {
+    "time": 0,
+    "optimal": true,
+    "obj": 206,
+    "sol": [[2], [1, 3]]
+  },
+  "successors_FF_MIN_gecode": {
+    "time": 0,
+    "optimal": true,
+    "obj": 206,
+    "sol": [[2], [1, 3]]
+  },
+  "successors_REG_chuffed": {
+    "time": 0,
+    "optimal": true,
+    "obj": 206,
+    "sol": [[2], [1, 3]]
+  },
+  "successors_Y_DWD_chuffed": {
+    "time": 0,
+    "optimal": true,
+    "obj": 206,
+    "sol": [[2], [1, 3]]
+  }
 }
