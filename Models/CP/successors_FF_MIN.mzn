@@ -92,7 +92,7 @@ constraint forall(k1, k2 in K where k1 < k2 /\ l[k1] == l[k2]) (
 %%%%%% SEARCH %%%%%%
 
 solve
-:: int_search([successors[i] | i in N], first_fail, indomain_split)
+:: int_search([successors[i] | i in N], first_fail, indomain_min)
 %:: int_search(successors, dom_w_deg, indomain_random)
 %:: restart_luby(100)
 %:: int_search(dp, max_regret, indomain_min)
