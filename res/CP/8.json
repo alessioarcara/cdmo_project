@@ -32,123 +32,24 @@
             ]
         ]
     },
-    "successors_IMPLIED_gecode": {
+    "successors_SB_gecode": {
         "time": 300,
         "optimal": false,
-        "obj": 186,
+        "obj": 246,
         "sol": [
-            [
-                10,
-                6
-            ],
             [
                 9,
-                7
-            ],
-            [
-                8
-            ],
-            [
-                5
-            ],
-            [
-                4
-            ],
-            [
-                3
-            ],
-            [
-                2
-            ],
-            [
-                1
-            ]
-        ]
-    },
-    "successors_SEARCH_gecode": {
-        "time": 300,
-        "optimal": false,
-        "obj": 186,
-        "sol": [
-            [
-                6
-            ],
-            [
-                3
-            ],
-            [
-                10
-            ],
-            [
-                1
-            ],
-            [
-                2,
-                4,
-                7
-            ],
-            [
-                8
-            ],
-            [
-                5
-            ],
-            [
-                9
-            ]
-        ]
-    },
-    "successors_best_gecode": {
-        "time": 300,
-        "optimal": false,
-        "obj": 355,
-        "sol": [
-            [
-                1,
                 10,
-                9
-            ],
-            [
-                2
-            ],
-            [
                 3
             ],
             [
                 4
             ],
             [
-                5
-            ],
-            [
-                6
-            ],
-            [
                 7
             ],
             [
                 8
-            ]
-        ]
-    },
-    "successors_best_chuffed": {
-        "time": 2,
-        "optimal": true,
-        "obj": 186,
-        "sol": [
-            [
-                6
-            ],
-            [
-                4,
-                7
-            ],
-            [
-                8
-            ],
-            [
-                10,
-                5
             ],
             [
                 2
@@ -157,10 +58,10 @@
                 1
             ],
             [
-                9
+                6
             ],
             [
-                3
+                5
             ]
         ]
     }

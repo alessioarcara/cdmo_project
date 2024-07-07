@@ -14,8 +14,8 @@ array[1..(n+2*m), 1..(n+2*m)] of int: D;       % distance matrix
 
 % Decision variables
 array[V] of var 0..(n+2*m): successors;
-array[V] of var 1..m: assignments;
-array[V] of var 0..n: positions;
+array[V] of var K: assignments;
+array[V] of var 0..n+1: positions;
 
 % Auxiliary variables
 array[K] of var set of N: b;                   % array of assigned items to courier
@@ -23,8 +23,8 @@ array[1..n+m] of var 0..max(D): dp;            % array of arc travelled distance
 array[K] of var 1..sum(D): distances;          % array of total distance
 % Improvements
 array[V] of var 0..(n+2*m): predecessors;
-array[V] of var 0..max(l): cps;                % array of added capacities
-array[1..(n+m)] of var 1..(100*m+(2*m+n)): y;  % link variable
+
+function var int: equality(var int: assignment_1, int:assignment_2) = if assignment_1 == assignment_2 then 1 else 0 endif;
 
 % Constraints
 % (2)
@@ -55,35 +55,20 @@ constraint forall(i in K) (
 );
 
 
+%%%%%% SYMMETRY BREAKING %%%%%%
+
+constraint forall(k1, k2 in K where k1 < k2 /\ l[k1] == l[k2]) (
+    lex_lesseq(
+        [equality(assignments[i], k1) | i in N], 
+        [equality(assignments[i], k2) | i in N]
+    )
+);
+
 %%%%%% PREDECESSORS (IMPLIED) %%%%%%
 % redundant constraint but better propagation
 
-constraint forall(i, k in 1..n+m)(
+constraint forall(i, k in V)(
   predecessors[k] = i <-> successors[i] = k
-);
-
-constraint forall(i in 1..m)(
-  predecessors[n+m+i] = n+i
-);
-
-%%%%%% CAPACITY SUM %%%%%%
-
-constraint forall(i in V)(
-  cps[i] <= l[assignments[i]]
-);
-
-constraint forall(i in 1..m)(
-  cps[n+i] == 0
-);
-
-constraint forall(i in 1..n)(
-  element(successors[i], cps, cps[i] + s[i])
-);
-
-%%%%%% LINKING assignments and successors %%%%%%
-
-constraint forall(i in 1..m)(
-  y[n+i] = 100*assignments[n+i] + successors[n+i]
 );
 
 
