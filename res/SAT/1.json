@@ -1,5 +1,5 @@
 {
-    "built-in_Z3": {
+    "base_Z3_binary": {
         "time": 0,
         "optimal": true,
         "obj": 14,
@@ -16,7 +16,24 @@
             ]
         ]
     },
-    "base_Z3_binary": {
+    "base_Z3_linear": {
+        "time": 0,
+        "optimal": true,
+        "obj": 14,
+        "sol": [
+            [
+                4,
+                3,
+                1
+            ],
+            [
+                2,
+                5,
+                6
+            ]
+        ]
+    },
+    "base_Z3_SB": {
         "time": 0,
         "optimal": true,
         "obj": 14,

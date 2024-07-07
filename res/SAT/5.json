@@ -1,5 +1,33 @@
 {
-    "swc_bo": {
+    "base_Z3_binary": {
+        "time": 0,
+        "optimal": true,
+        "obj": 206,
+        "sol": [
+            [
+                2
+            ],
+            [
+                1,
+                3
+            ]
+        ]
+    },
+    "base_Z3_linear": {
+        "time": 0,
+        "optimal": true,
+        "obj": 206,
+        "sol": [
+            [
+                2
+            ],
+            [
+                1,
+                3
+            ]
+        ]
+    },
+    "base_Z3_SB": {
         "time": 0,
         "optimal": true,
         "obj": 206,
