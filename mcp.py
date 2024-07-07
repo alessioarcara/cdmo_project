@@ -36,15 +36,29 @@ def solve_with_cp(file_name, model_name, solver_name, timeout_seconds):
 
     def solve():
         return instance.solve(timeout=timedelta(seconds=timeout_seconds))
-    
+
     result, solving_time = measure_solve_time(solve)
     print(result)
 
     if result.status == Status.SATISFIED or result.status == Status.OPTIMAL_SOLUTION:
-        
+
         optimal = result.status == Status.OPTIMAL_SOLUTION
         obj = result["objective"]
-        sol = [list(route) for route in result["b"]]
+
+        successors = result["successors"]
+
+        def extract_route(k):
+            route = []
+            curr = n + k
+            while True:
+                if curr <= n:
+                    route.append(curr)
+                current = successors[curr - 1]
+                if current == 0:
+                    break
+            return route
+
+        sol = [extract_route(i) for i in range(1, m+1)]
 
         print_result(solving_time, optimal, obj, sol, True)
         print(result.statistics)
@@ -59,6 +73,7 @@ def solve_with_cp(file_name, model_name, solver_name, timeout_seconds):
                         f'./res/CP/{instance}.json')
     else: 
         print_result(solving_time, result.status, None, None, False)
+
 
 def solve_with_sat(file_name, solver, timeout_seconds, model='swc'):
     from Models.SAT.sat_model import sat_model
