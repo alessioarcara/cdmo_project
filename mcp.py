@@ -35,7 +35,10 @@ def solve_with_cp(file_name, model_name, solver_name, timeout_seconds):
     print(f"n={n}, m={m}")
 
     def solve():
-        return instance.solve(timeout=timedelta(seconds=timeout_seconds))
+        if solver_name == "chuffed":
+            return instance.solve(free_search=True, timeout=timedelta(seconds=timeout_seconds))
+        else:
+            return instance.solve(timeout=timedelta(seconds=timeout_seconds))
 
     result, solving_time = measure_solve_time(solve)
     print(result)

@@ -1,4 +1,5 @@
 include "alldifferent.mzn";
+include "cumulative.mzn";
 include "element.mzn";
 include "int_set_channel.mzn";
 
@@ -14,8 +15,9 @@ array[1..(n+2*m), 1..(n+2*m)] of int: D;       % distance matrix
 
 % Decision variables
 array[V] of var 0..(n+2*m): successors;
-array[V] of var 1..m: assignments;
-array[V] of var 0..n: positions;
+array[V] of var K: assignments;
+array[V] of var 0..n+1: positions;
+array[1..(n+m)] of var 1..(100*m+(2*m+n)): y;
 
 % Auxiliary variables
 array[K] of var set of N: b;                   % array of assigned items to courier
@@ -24,7 +26,8 @@ array[K] of var 1..sum(D): distances;          % array of total distance
 % Improvements
 array[V] of var 0..(n+2*m): predecessors;
 array[V] of var 0..max(l): cps;                % array of added capacities
-array[1..(n+m)] of var 1..(100*m+(2*m+n)): y;  % link variable
+
+function var int: equality(var int: assignment_1, int:assignment_2) = if assignment_1 == assignment_2 then 1 else 0 endif;
 
 % Constraints
 % (2)
@@ -45,6 +48,15 @@ constraint forall(i in 1..n+m)(
 constraint int_set_channel([assignments[i] | i in N], b);
 % (12)
 constraint forall(i in K)(sum([s[j] | j in b[i]]) <= l[i]);
+%constraint forall(k in K)(
+%  let {
+%    array[int] of var int: courier_assignments = [equality(assignments[j], k)| j in N],
+%    array[int] of var int: courier_durations = [1 | j in N],
+%    array[int] of var int: courier_resources = [if assignments[j] == k then s[j] else 0 endif | j in N],
+%    var int: courier_capacity = l[k]
+%  } in
+%  cumulative(courier_assignments, courier_durations, courier_resources, courier_capacity)
+%);
 % (13.2)
 constraint forall(i in 1..n+m)(
   element(i, dp, D[i, successors[i]])
@@ -58,38 +70,36 @@ constraint forall(i in K) (
 %%%%%% PREDECESSORS (IMPLIED) %%%%%%
 % redundant constraint but better propagation
 
-constraint forall(i, k in 1..n+m)(
+constraint forall(i, k in V)(
   predecessors[k] = i <-> successors[i] = k
-);
-
-constraint forall(i in 1..m)(
-  predecessors[n+m+i] = n+i
 );
 
 %%%%%% CAPACITY SUM %%%%%%
 
-constraint forall(i in V)(
-  cps[i] <= l[assignments[i]]
-);
-
-constraint forall(i in 1..m)(
-  cps[n+i] == 0
-);
-
-constraint forall(i in 1..n)(
+constraint forall(i in N)(
   element(successors[i], cps, cps[i] + s[i])
 );
 
-%%%%%% LINKING assignments and successors %%%%%%
+%%%%%% SYMMETRY BREAKING %%%%%%
+
+
+constraint forall(k1, k2 in K where k1 < k2 /\ l[k1] == l[k2]) (
+    lex_lesseq(
+        [equality(assignments[i], k1) | i in N], 
+        [equality(assignments[i], k2) | i in N]
+    )
+);
+
+%%%% LINKING assignments and successors %%%%%
 
 constraint forall(i in 1..m)(
   y[n+i] = 100*assignments[n+i] + successors[n+i]
 );
 
-%%%%%% SYMMETRY BREAKING %%%%%%
-
-%constraint forall(k1 in K, k2 in K where k1 < k2 /\ l[k1] == l[k2]) (successors[n+k1] < successors[n+k2]);
-constraint forall(i in 1..m-1, j in i+1..m where l[i] == l[j]) (successors[n+i] < successors[n+j]);
-
-
-solve minimize max(distances);
+%%%%%% SEARCH %%%%%%
+solve :: seq_search([
+    int_search(y, dom_w_deg, indomain_min),
+    restart_luby(100),
+    relax_and_reconstruct(successors, 90)
+])
+minimize max(distances);
