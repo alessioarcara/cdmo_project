@@ -1,8 +1,8 @@
 # Heterogeneous Min-Max Vehicle Routing Problem
 
 This repository represents the group project for Combinatorial Decision Making
-and Optimization 2024/2024, focusing on implementing and evaluating diverse
-solving techniques (*CP*, *SAT*, *MIP*) for the **Heterogeneous Min-Max Vehicle
+and Optimization 2023/2024, focusing on implementing and evaluating diverse
+solving techniques (*CP*, *SAT*, *SMT*, *MIP*) for the **Heterogeneous Min-Max Vehicle
 Routing Problem**. The objective is to efficiently plan routes for couriers
 with varying capacities to collect all available items while minimizing the
 maximum distance traveled by any courier.
@@ -22,11 +22,16 @@ $ run_docker.sh <instance_file> <method> <method_name> <solver_name> <time> [use
 ### Parameters
 
 * `<instance_file>`: Path to the instance file.
-* `<method>`: Method to use (`cp`, `sat`, `mip`).
+* `<method>`: Method to use (`cp`, `sat`, `smt`, `mip`).
 * `<model_name>`: Formulation to use (depends on the chosen method):
+    - **CP**: `successors`, `successors_SB`, `successors_IMP`, `successors_best`
     - **MIP**: `three_index_vehicle_flow`, `three_index_vehicle_flow_SB`, `three_index_vehicle_flow_SB_IMPLIED`
+    - **SAT**: `base`
+    - **SMT**: `base`
 * `<solver_name>`: Solver to employ (depends on the chosen method):
     - **CP**: `gecode`, `chuffed`
+    - **SAT**: `Z3`
+    - **SMT**: `Z3`
     - **MIP**: `highs`, `cbc`, `gcg`, `scip`
 * `<time>`: Maximum time in seconds allowed for the solver to run.
 * `[use_warm_start]`: Optional. 'true' to use warm start (only applicable for HiGHS solver in MIP).
@@ -53,16 +58,26 @@ Repository
 ├── Instances/          # Contains problem instances
 ├── Models/             # Contains different formulations used
 │   └── CP/
+│   │   ├── positions
+│   │   ├── successors
+│   │   ├── successors_SB
+│   │   ├── successors_IMP
+│   │   ├── successors_best
+│   │   └── successors_circuit
 │   └── MIP/
 │   │   ├── three_index_vehicle_flow
 │   │   ├── three_index_vehicle_flow_SB
 │   │   └── three_index_vehicle_flow_SB_IMPLIED
-│   └── SAT/
+│   └── SAT/
+│       ├── cardinality_constraints
+│       ├── logical_relation_constraints
+│       └── pseudoboolean_constraints
 ├── Notebooks/          # Jupyter notebooks for plotting results and graphs
 ├── res/                # Contains results obtained on different instances and techniques
 │   └── CP/
 │   └── MIP/
 │   └── SAT/
+|   └── SMT/
 ├── runner.sh           # Bash script to run method and solver on all instances (Python)
 ├── run_docker.sh       # Bash script to run method and solver on specific instance (Docker)
 └── [other files]

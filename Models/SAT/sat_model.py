@@ -5,7 +5,7 @@ from .pseudoboolean_constraints import *
 from .logical_relation_constraints import *
 import time
 
-def sat_model(m, n, s, l, D, symmetry_breaking = None, implied_constraint = None, timeout_duration = None):
+def sat_model(m, n, s, l, D, symmetry_breaking = False, implied_constraint = False, search='binary', timeout_duration = None):
     # n: number of items
     # m: number of couriers
     # l: load capacities of couriers
@@ -19,8 +19,13 @@ def sat_model(m, n, s, l, D, symmetry_breaking = None, implied_constraint = None
     seq = [[Bool(f"seq_{i}_{j}") for j in range(n)] for i in range(n)]  # seq[i][j]: item i is in position j in the sequence
     
     solver = Solver()
+
+    # Convert sizes and load capacities to binary representations
+    s_bin = [num_to_bits(ld_int(sj), sj)[::-1] for sj in s]
+    l_bin = [num_to_bits(ld_int(li), li)[::-1] for li in l]
     
     # Constraints
+    
     # 1. Each item must be assigned to exactly one courier
     for j in range(n):
         solver.add(exactly_one([x[i][j] for i in range(m)], f"assign_item_{j}"))
@@ -59,19 +64,24 @@ def sat_model(m, n, s, l, D, symmetry_breaking = None, implied_constraint = None
 
     # Symmetry breaking constraints
     if symmetry_breaking:
-        pass
-        # Sort the list of loads, keeping the permutation used for later
-        # L = [(l[i], i) for i in range(m)]
-        # L.sort(reverse=True)
-        # l, permutation = zip(*L)
-        # l = list(l)
-        # permutation = list(permutation)
+        w = [[Bool(f"w_{i}_{k}") for k in range(ld_int(sum(s)))] for i in range(m)]
 
-        # Symmetry breaking constraint: impose the actual courier loads to be sorted decreasingly
+        sorted_loads = [(l[i], i) for i in range(m)]
+        sorted_loads.sort(reverse = True)
+        l, permutation = zip(*sorted_loads)
+        l = list(l)
+        permutation = list(permutation)
+        
+        solver.add([lex_less_equal(w[i+1], w[i]) for i in range(len(w) - 1)])
 
         # Break symmetry within same load amounts
-        # for i in range(m - 1):
-            # solver.add(Implies(And([w[i][k] == w[i+1][k] for k in range(len(w[i]))]), lex_less_equal(x[i], x[i + 1])))
+        for i in range(m - 1):
+            solver.add(Implies(same_load_constraint(w[i], w[i + 1]), lex_less_equal(x[i], x[i + 1])))
+
+        for i in range(m):
+            pass
+            # solver.add(conditional_sum_K_bin(x[i], s_bin, w[i], f"courier_load_{i}"))
+            # solver.add(lex_less_equal(w[i], l_bin[i]))
 
     # Additional implied constraints
     if implied_constraint:
@@ -84,47 +94,63 @@ def sat_model(m, n, s, l, D, symmetry_breaking = None, implied_constraint = None
                 solver.add(Not(y[i][j][j]))
         
     # Define the distance traveled by any courier
-    flatten_y = [[] for _ in range(m)]
-    flatten_D = [D[i][j] for i in range(n + 1) for j in range(n + 1) if D[i][j] != 0]
-
-    for i in range(m):
-        for j in range(n + 1):
-            for k in range(n + 1):
-                if j != k:
-                    flatten_y[i].append(y[i][j][k])
+    flatten_y = [[y[i][j][k] for j in range(n + 1) for k in range(n + 1)] for i in range(m)]
+    flatten_D = [D[i][j] for i in range(n + 1) for j in range(n + 1)]
     
     encoding_time = time.time()
     timeout = encoding_time + timeout_duration
 
-    # Binary search for minimizing the maximum distance
-    low = 0
-    high = sum(max(row) for row in D)  # Initial upper bound
-
-    best_solution = None
-    best_max_distance = None
-
-    while low <= high:
-        mid = (low + high) // 2
-        solver.push()
-
-        # Add the current distance constraint
-        for i in range(m):
-            solver.add(PbLe([(lit, flatten_D[idx]) for idx, lit in enumerate(flatten_y[i])], mid))
-            # solver.add(Pb_adder_networks(flatten_y[i], flatten_D, mid))
-
-        now = time.time()
-        if now >= timeout:
-            break
-        solver.set('timeout', millisecs_left(now, timeout)) 
-
-        if solver.check() == sat:
+    if search == 'linear':
+        solver.set('timeout', millisecs_left(time.time(), timeout))
+        while solver.check() == sat:
             best_solution = solver.model()
             best_max_distance = obj_function(best_solution, m, D, y)
-            high = mid - 1
-        else:
-            low = mid + 1
-        
-        solver.pop()
+
+            if best_max_distance <= lower_bound:
+                break
+
+            upper_bound = best_max_distance - 1
+            solver.pop()
+            solver.push()
+
+            for i in range(m):
+                solver.add(PbLe([(lit, flatten_D[idx]) for idx, lit in enumerate(flatten_y[i])], mid))
+            
+            now = time.time()
+            if now >= timeout:
+                break
+            solver.set('timeout', millisecs_left(now, timeout))
+    elif search == 'binary':
+        # Binary search for minimizing the maximum distance
+        low = 0
+        high = sum(max(row) for row in D)  # Initial upper bound
+
+        best_solution = None
+        best_max_distance = None
+
+        while low <= high:
+            mid = (low + high) // 2
+            solver.push()
+
+            # Add the current distance constraint
+            for i in range(m):
+                solver.add(PbLe([(lit, flatten_D[idx]) for idx, lit in enumerate(flatten_y[i])], mid))
+                # solver.add(Pb_adder_networks(flatten_y[i], flatten_D, mid))
+
+            now = time.time()
+            if now >= timeout:
+                break
+            solver.set('timeout', millisecs_left(now, timeout)) 
+
+            if solver.check() == sat:
+                best_solution = solver.model()
+                best_max_distance = obj_function(best_solution, m, D, y)
+                high = mid - 1
+            else:
+                low = mid + 1
+            solver.pop()
+    else:
+        raise ValueError(f"Input parameter [search] mush be either 'Linear' or 'Binary', was given '{search}'")
 
     end_time = time.time()
     if end_time >= timeout:
@@ -133,8 +159,7 @@ def sat_model(m, n, s, l, D, symmetry_breaking = None, implied_constraint = None
         solving_time = math.floor(end_time - encoding_time)
     
     if best_solution is None:
-        ans = "N/A" if solving_time == timeout_duration else "UNSAT"
-        return (ans, solving_time, None)
+        return ("N/A" if solving_time == timeout_duration else "UNSAT", solving_time, None)
     else:
         routes = []
         for i in range(m):
@@ -158,6 +183,5 @@ def sat_model(m, n, s, l, D, symmetry_breaking = None, implied_constraint = None
                 route.pop(-1)
 
             routes.append(route)
-
     
         return (best_max_distance, solving_time, routes)
