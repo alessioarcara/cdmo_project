@@ -1,0 +1,58 @@
+{
+    "successors_DWD_chuffed": {
+        "time": 2,
+        "optimal": true,
+        "obj": 226,
+        "sol": [
+            [
+                5
+            ],
+            [
+                8
+            ],
+            [
+                6
+            ],
+            [
+                2
+            ],
+            [
+                1,
+                4
+            ],
+            [
+                9,
+                7,
+                3
+            ]
+        ]
+    },
+    "successors_Y_DWD_chuffed": {
+        "time": 2,
+        "optimal": true,
+        "obj": 226,
+        "sol": [
+            [
+                9,
+                3
+            ],
+            [
+                8
+            ],
+            [
+                6
+            ],
+            [
+                2
+            ],
+            [
+                1,
+                4
+            ],
+            [
+                5,
+                7
+            ]
+        ]
+    }
+}
