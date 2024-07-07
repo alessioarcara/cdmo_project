@@ -1,38 +1,56 @@
 {
-  "successors_DWD_MIN_chuffed": {
-    "time": 6,
-    "optimal": true,
-    "obj": 322,
-    "sol": [[6], [8], [5], [1, 2, 3], [4], [7]]
-  },
-  "successors_FF_MIN_chuffed": {
-    "time": 5,
-    "optimal": true,
-    "obj": 322,
-    "sol": [[6], [8], [5], [1, 2, 3], [4], [7]]
-  },
-  "successors_LNS_chuffed": {
-    "time": 2,
-    "optimal": true,
-    "obj": 322,
-    "sol": [[6], [2], [5], [8], [4], [3, 1, 7]]
-  },
-  "successors_FF_MIN_gecode": {
-    "time": 56,
-    "optimal": true,
-    "obj": 322,
-    "sol": [[3, 4, 6], [7], [2], [8], [1], [5]]
-  },
-  "successors_REG_chuffed": {
-    "time": 2,
-    "optimal": true,
-    "obj": 322,
-    "sol": [[6], [2], [5], [8], [4], [3, 1, 7]]
-  },
-  "successors_Y_DWD_chuffed": {
-    "time": 2,
-    "optimal": true,
-    "obj": 322,
-    "sol": [[6, 4, 3], [8], [2], [5], [1], [7]]
-  }
+    "successors_DWD_chuffed": {
+        "time": 2,
+        "optimal": true,
+        "obj": 322,
+        "sol": [
+            [
+                6
+            ],
+            [
+                2
+            ],
+            [
+                5
+            ],
+            [
+                8
+            ],
+            [
+                4
+            ],
+            [
+                3,
+                1,
+                7
+            ]
+        ]
+    },
+    "successors_Y_DWD_chuffed": {
+        "time": 2,
+        "optimal": true,
+        "obj": 322,
+        "sol": [
+            [
+                6,
+                4,
+                3
+            ],
+            [
+                8
+            ],
+            [
+                2
+            ],
+            [
+                5
+            ],
+            [
+                1
+            ],
+            [
+                7
+            ]
+        ]
+    }
 }
