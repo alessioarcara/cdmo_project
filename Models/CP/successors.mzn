@@ -60,6 +60,7 @@ constraint forall(i in K) (
   distances[i] = sum([dp[j] | j in b[i]]) + dp[n+i]
 );
 
+
 %%%%%% SEARCH %%%%%%
 solve :: seq_search([
     int_search(successors, dom_w_deg, indomain_min),

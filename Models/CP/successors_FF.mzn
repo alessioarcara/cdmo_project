@@ -66,26 +66,24 @@ constraint forall(i in K) (
   distances[i] = sum([dp[j] | j in b[i]]) + dp[n+i]
 );
 
-%%%%%% PREDECESSORS (IMPLIED) %%%%%%
-% redundant constraint but better propagation
-
-constraint forall(i, k in V)(
-  predecessors[k] = i <-> successors[i] = k
-);
-
-%%%%%% CAPACITY SUM %%%%%%
-
-constraint forall(i in N)(
-  element(successors[i], cps, cps[i] + s[i])
-);
 
 %%%%%% SYMMETRY BREAKING %%%%%%
-
 constraint forall(k1, k2 in K where k1 < k2 /\ l[k1] == l[k2]) (
     lex_lesseq(
         [equality(assignments[i], k1) | i in N], 
         [equality(assignments[i], k2) | i in N]
     )
+);
+
+%%%%%% PREDECESSORS (IMPLIED) %%%%%%
+% redundant constraint but better propagation
+constraint forall(i, k in V)(
+  predecessors[k] = i <-> successors[i] = k
+);
+
+%%%%%% CAPACITY SUM (IMPLIED) %%%%%%
+constraint forall(i in N)(
+  element(successors[i], cps, cps[i] + s[i])
 );
 
 %%%%%% SEARCH %%%%%%

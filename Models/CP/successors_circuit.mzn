@@ -21,6 +21,7 @@ array[K] of var set of N: b;               % array of assigned items to courier
 array[V] of var 0..max(D): dp;             % array of arc travelled distance
 array[K] of var 0..sum(D): distances;      % array of total distance
 
+
 % Constraints
 % alldifferent + subtour elimination
 
@@ -31,7 +32,7 @@ constraint forall(k in K)(
     successors[n+m+k] == n + k
 );
 
-%% i predecessori degli start depot sono gli end depot 
+% the predecessors of the start depots are the end depots
 %constraint forall(k in K)(
 %    predecessors[n+k] == n + m + k
 %);
