@@ -1,91 +1,90 @@
-include "alldifferent.mzn";
-include "circuit.mzn";
-include "element.mzn";
-include "int_set_channel.mzn";
+include "globals.mzn";
 
-% Input parameters
-int: m;                                    % number of couriers
-int: n;                                    % number of items
-set of int: K = 1..m;                      % set of couriers
-set of int: N = 1..n;                      % set of items
-set of int: V = 1..(n+2*m);                % set of vertices
-array[K] of int: l;                        % load capacities of couriers
-array[N] of int: s;                        % sizes of items
-array[1..(n+2*m), 1..(n+2*m)] of int: D;   % distance matrix
+%%% Parameters %%%
+int: m;                                           % Number of couriers
+int: n;                                           % Number of items
+set of int: K = 1..m;                             % Set of couriers
+set of int: N = 1..n;                             % Set of items
+set of int: V = 1..(n + 2 * m);                   % Set of nodes (items + depots)
+array[K] of int: l;                               % Maximum capacities of couriers
+array[N] of int: s;                               % Sizes of items
+array[V, V] of int: D;                            % Distance matrix between items
 
-% Decision variables
-array[V] of var V: successors;
-%array[V] of var V: predecessors;
-array[V] of var K: assignments;
-array[K] of var set of N: b;               % array of assigned items to courier
-array[V] of var 0..max(D): dp;             % array of arc travelled distance
-array[K] of var 0..sum(D): distances;      % array of total distance
+%%% Decision variables %%%
+array[V] of var V: successors;                    % Successor nodes
+array[V] of var V: predecessors;                  % Predecessor nodes
+array[V] of var K: assignments;                   % Node-to-Courier assignments
+
+%%% Auxiliary variables %%%
+array[V] of var 0..sum(D): cumulative_distances;  % Cumulative travel distance at each node
+array[1..(n + m)] of var 0..max(l): cumulative_capacities; % Cumulative capacities at each node
+var 0..sum(D): maximum_distance;                  % Max distance travelled by any courier
 
 
-% Constraints
-% alldifferent + subtour elimination
+%%% Constraints %%%
 
+% Define depots
+set of int: Start_Depots = n + 1..n + m;                                % Start depots
+set of int: End_Depots = n + m + 1..n + 2 * m;                          % End depots 
+set of int: Start_Depots_Excluding_First = n + 2..n + m;                % Start depots excluding the first one
+set of int: End_Depots_Excluding_Last = n + m + 1..n + 2 * m - 1;       % End depots excluding the last one
+
+% Ensure the nodes form a valid circuit
 constraint circuit(successors);
+constraint circuit(predecessors);
 
-% the successors of the end depots are the start depots
-constraint forall(k in K)(
-    successors[n+m+k] == n + k
+% Depots must link properly
+constraint forall(i in Start_Depots_Excluding_First)(predecessors[i] = i + m - 1);
+constraint forall(i in End_Depots_Excluding_Last)(successors[i] = i - m + 1);
+constraint successors[n + 2 * m] = n + 1;
+constraint predecessors[n + 1] = n + 2 * m;
+
+% Assign couriers correctly to depots
+constraint forall(i in Start_Depots)(assignments[i] = i - n);
+constraint forall(i in End_Depots)(assignments[i] = i - n - m);
+
+% Ensure courier consistency for successors and predecessors
+constraint forall(i in N)(assignments[successors[i]] = assignments[i]);
+constraint forall(i in N)(assignments[predecessors[i]] = assignments[i]);
+
+% Ensure couriers don't exceed max capacity
+constraint bin_packing_capa(l, [assignments[i] | i in N], s);
+
+% Channeling constraints between successors and predecessors (Implied)
+constraint forall(i in N) (
+    (successors[predecessors[i]] == i) /\ (predecessors[successors[i]] == i)
 );
 
-% the predecessors of the start depots are the end depots
-%constraint forall(k in K)(
-%    predecessors[n+k] == n + m + k
-%);
-
-%constraint forall(k in K)(
-%    predecessors[]
-%);
-
-
-% (4)
-%constraint forall(k in K)(assignments[n+k] == k /\ assignments[n+m+k] == k);
-% (7)
-constraint all_different(successors);
-% (8) (9)
-%constraint forall(i in N)(element(successors[i], assignments, assignments[i]));
-
+% Cumulative capacity constraints
+constraint forall(i in Start_Depots)(cumulative_capacities[i] = 0);
 constraint forall(i in N)(
-    assignments[successors[i]] = assignments[i]
+    cumulative_capacities[i] = cumulative_capacities[predecessors[i]] + s[i]
 );
 
-%constraint forall(i in N)(
-%    assignments[predecessors[i]] = assignments[i]
-%);
-% (11.2)
-constraint int_set_channel([assignments[i] | i in N], b);
-% (12)
-constraint forall(k in K)(sum([s[i] | i in b[k]]) <= l[k]);
-% (13.2)
-constraint forall(i in V)(
- element(i, dp, D[i, successors[i]])
+
+% Force all couriers to take at least one item 
+constraint forall(i in Start_Depots)(successors[i] != i + m);
+constraint forall(i in End_Depots)(predecessors[i] != i - m);
+
+% Cumulative distance constraints
+constraint forall(i in Start_Depots)(cumulative_distances[i] = 0);
+constraint forall(i in Start_Depots)(
+    cumulative_distances[successors[i]] = D[n + 1, successors[i]]
 );
-% (14)
-constraint forall(k in K)(dp[n+m+k] == 0);
+constraint forall(i in N)(
+    cumulative_distances[successors[i]] = cumulative_distances[i] + D[i, successors[i]]
+);
+
+% Symmetry-breaking constraint
+constraint forall(i in Start_Depots)(successors[i] <= predecessors[i + m]);
+
+% Objective function: Minimize the maximum distance traveled by any courier
+constraint maximum_distance = max([cumulative_distances[i] | i in End_Depots]);
 
 
-%%% PREDECESSORS - SUCCESSORS CONSTRAINTS %%%
-
-constraint circuit(successors);
-%constraint circuit(predecessors); % redundant
-
-%constraint forall(i in N) (
-%    successors[predecessors[i]] = i
-%);
-
-%constraint forall(i in N) (
-%    predecessors[successors[i]] = i
-%);
-
-%%%
-
-
-% Objective variable
-constraint distances = [sum([dp[i] | i in 1..n+m where assignments[i] == k]) | k in K];
-
-% Objective function
-solve minimize max(distances);
+solve :: seq_search([
+    int_search(successors, first_fail, indomain_split),
+    int_search(assignments, first_fail, indomain_split),
+    int_search(predecessors,first_fail,indomain_split),
+    ])
+    minimize maximum_distance;

@@ -74,14 +74,14 @@ def solve_with_cp(file_name, model_name, solver_name, timeout_seconds):
                         optimal,
                         sol,
                         f'./res/CP/{instance}.json')
-    else: 
+    else:
         print_result(solving_time, result.status, None, None, False)
 
 
 def solve_with_sat(file_name, model_name, solver, timeout_seconds, search='binary'):
     from Models.SAT.sat_model import sat_model
     m, n, l, s, D = read_instances(file_name)
-    
+
     if solver == 'Z3':
         obj, time, sol = sat_model(m, n, s, l, D, symmetry_breaking=False, implied_constraint=True, timeout_duration=timeout_seconds)
     elif solver == 'glucose':
